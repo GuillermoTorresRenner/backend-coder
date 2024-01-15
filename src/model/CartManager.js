@@ -1,8 +1,5 @@
 const { v4: uuidv4 } = require("uuid");
 const FileManager = require("../utils/FileManager");
-const productManager = require("../model/ProductManager"); //sremover quizás
-const Validate = require("../utils/Validate");
-const { json } = require("express");
 
 class CartManager {
   constructor() {
@@ -10,7 +7,19 @@ class CartManager {
     this.carts = [];
   }
 
-  addToCart = async (cid, pid, quantity) => {
+  createNewCart = async () => {
+    this.carts = await this.fileManager.getFromFile();
+    const id = uuidv4();
+    this.carts.push({
+      id,
+      products: [],
+    });
+    console.log(this.carts);
+
+    await this.fileManager.saveInFile(this.carts);
+    return id;
+  };
+  addToCart = async (cid, pid, quantity = 1) => {
     this.carts = await this.fileManager.getFromFile();
     const foundedCart = this.carts.find((c) => c.id === cid);
 
