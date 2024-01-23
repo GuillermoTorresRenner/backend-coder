@@ -1,6 +1,7 @@
-const { v4: uuidv4 } = require("uuid");
-const FileManager = require("../utils/FileManager");
-const Validate = require("../utils/Validate");
+import { v4 as uuidv4 } from "uuid";
+import FileManager from "../utils/FileManager.js";
+
+import Validate from "../utils/Validate.js";
 
 class ProductManager {
   constructor() {
@@ -89,4 +90,4 @@ class ProductManager {
   };
 }
 
-module.exports = new ProductManager();
+export default new ProductManager();

@@ -1,5 +1,5 @@
-const { v4: uuidv4 } = require("uuid");
-const FileManager = require("../utils/FileManager");
+import { v4 as uuidv4 } from "uuid";
+import FileManager from "../utils/FileManager.js";
 
 class CartManager {
   constructor() {
@@ -52,4 +52,4 @@ class CartManager {
   };
 }
 
-module.exports = new CartManager();
+export default new CartManager();

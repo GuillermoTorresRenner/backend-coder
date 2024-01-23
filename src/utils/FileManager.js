@@ -1,5 +1,4 @@
-const fs = require("fs").promises;
-
+import { promises as fs } from "fs";
 class FileManager {
   constructor(path) {
     this.path = path;
@@ -72,4 +71,4 @@ class FileManager {
     }
   };
 }
-module.exports = FileManager;
+export default FileManager;
