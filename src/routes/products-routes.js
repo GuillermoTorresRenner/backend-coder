@@ -1,5 +1,6 @@
 import { Router } from "express";
 import productManager from "../model/ProductManager.js";
+import io from "../app.js";
 const router = Router();
 
 router.get("/products", async (req, res) => {
@@ -38,7 +39,10 @@ router.post("/products/", async (req, res) => {
   try {
     body.status = true;
     await productManager.addProduct(body);
-    res.status(201).send(body);
+    const newProductsList = await productManager.getProducts();
+    console.log(newProductsList);
+    io.emit("res", newProductsList);
+    res.status(201).json(body);
   } catch (error) {
     res.status(500).send(error.message);
   }

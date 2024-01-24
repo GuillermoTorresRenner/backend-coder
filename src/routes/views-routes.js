@@ -1,15 +1,15 @@
 import { Router } from "express";
+import ProductManager from "../model/ProductManager.js";
 const router = Router();
-const obj = {
-  name: "Guille",
-  message: "Este es un mensaje de prueba",
-};
-const data = {
-  obj,
-};
 
-router.get("/", (req, res) => {
-  res.render("home", data);
+router.get("/", async (req, res) => {
+  const data = await ProductManager.getProducts();
+  res.render("home", { data });
+});
+
+//Ruta para el socket
+router.get("/realtimeproducts", (req, res) => {
+  res.render("realTimeProducts");
 });
 
 export default router;

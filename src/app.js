@@ -1,3 +1,4 @@
+//Importaciones
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
@@ -7,8 +8,27 @@ import "dotenv/config";
 import products from "./routes/products-routes.js";
 import cart from "./routes/cart-routes.js";
 import views from "./routes/views-routes.js";
-const app = express();
+import { Server } from "socket.io";
+import ProductManager from "./model/ProductManager.js";
 
+//Servidor Http
+const app = express();
+const httpServer = app.listen(process.env.PORT || 3000, () => {
+  console.log(`Server running at port ${process.env.PORT}`);
+});
+let productos;
+const initialData = async () => {
+  productos = await ProductManager.getProducts();
+};
+//Servidor Socket
+const socketServer = new Server(httpServer);
+socketServer.on("connection", (socket) => {
+  initialData();
+  socket.emit("products", productos);
+});
+
+//Exportación de socket.io para poder usarlo en los endpoints:
+export default socketServer;
 // Middleware
 app.use(morgan("tiny"));
 app.use(cors());
@@ -23,7 +43,3 @@ app.engine("handlebars", handlebars.engine());
 app.set("views", __dirname + "/views");
 app.set("view engine", "handlebars");
 app.use(express.static(__dirname + "/public"));
-
-app.listen(process.env.PORT || 3000, () => {
-  console.log(`Server running at port ${process.env.PORT}`);
-});
