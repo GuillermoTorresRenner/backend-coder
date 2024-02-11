@@ -1,6 +1,7 @@
 //Importaciones
 import express from "express";
 import morgan from "morgan";
+import mongoose from "mongoose";
 import cors from "cors";
 import handlebars from "express-handlebars";
 import __dirname from "./__dirname.js";
@@ -9,7 +10,26 @@ import products from "./routes/products-routes.js";
 import cart from "./routes/cart-routes.js";
 import views from "./routes/views-routes.js";
 import { Server } from "socket.io";
-import ProductManager from "./model/ProductManager.js";
+import ProductManager from "./dao/ProductManager.js";
+
+//Base de datos
+// mongoose.connect(
+//   "mongodb+srv://LeBateleur:Arcanum@ecommerce.zzmhvav.mongodb.net/?retryWrites=true&w=majority"
+// );
+
+//Conexión a la base de datos
+const uri = "mongodb://localhost:27017/ecommerce?authSource=admin"; //Poner el nombre del contenedor de mongo en docker en vez de localhost
+const options = { useNewUrlParser: true, useUnifiedTopology: true, family: 4 };
+mongoose.set("strictQuery", false);
+
+mongoose.connect(uri, options).then(
+  () => {
+    console.log("Conectado a DB");
+  },
+  (err) => {
+    console.log(err);
+  }
+);
 
 //Servidor Http
 const app = express();
