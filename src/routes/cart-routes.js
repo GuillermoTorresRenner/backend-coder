@@ -1,11 +1,11 @@
 import { Router } from "express";
-import cartManager from "../dao/CartManager.js";
+import CartDao from "../dao/cartDao.js";
 const router = Router();
 
 router.get("/carts/:cid", async (req, res) => {
   const { cid } = req.params;
   try {
-    const data = await cartManager.getCartById(cid);
+    const data = await CartDao.getCartByID(cid);
     data
       ? res.status(200).send(data)
       : res.status(404).send("Carro no encontrado");
@@ -17,18 +17,18 @@ router.get("/carts/:cid", async (req, res) => {
 
 router.post("/carts", async (req, res) => {
   try {
-    const newCartID = await cartManager.createNewCart();
+    const newCartID = await CartDao.createNewcart();
     res.status(201).send(`Carro ${newCartID} creado`);
   } catch (error) {
     res.status(500).send(error.message);
   }
 });
-router.post("/carts/:cid/product/:pid", async (req, res) => {
+router.post("/carts/:cid/products/:pid", async (req, res) => {
   const { quantity } = req.body;
   const { cid, pid } = req.params;
   try {
-    await cartManager.addToCart(cid, pid, quantity);
-    res.status(201).send("Items Agregado al carro");
+    const data = await CartDao.addToCart(cid, pid, quantity);
+    res.status(201).send(data);
   } catch (error) {
     res.status(500).send(error.message);
   }

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import productsDao from "../dao/productDao.js";
+import ProductsDao from "../dao/productDao.js";
 import io from "../app.js";
 const router = Router();
 
@@ -8,13 +8,13 @@ router.get("/products", async (req, res) => {
 
   try {
     if (limit) {
-      const data = await productsDao.getAllProductswhitLimits(limit);
+      const data = await ProductsDao.getAllProductswhitLimits(limit);
       res.status(200).send(data);
     } else if (Object.keys(unknownParams).length > 0) {
       const unknownParam = Object.keys(unknownParams)[0];
       res.status(400).send(`Parámetro "${unknownParam}" es desconocido`);
     } else {
-      const data = await productsDao.getAllProducts();
+      const data = await ProductsDao.getAllProducts();
       res.status(200).send(data);
     }
   } catch (error) {
@@ -26,7 +26,7 @@ router.get("/products", async (req, res) => {
 router.get("/products/:pid", async (req, res) => {
   const { pid } = req.params;
   try {
-    const data = await productsDao.getProductByID(pid);
+    const data = await ProductsDao.getProductByID(pid);
     res.status(200).send(data);
   } catch (error) {
     console.error("Error:", error);
@@ -37,9 +37,9 @@ router.get("/products/:pid", async (req, res) => {
 router.post("/products", async (req, res) => {
   const { body } = req;
   try {
-    await productsDao.createNewProduct(body);
+    await ProductsDao.createNewProduct(body);
 
-    const newProductsList = await productsDao.getAllProducts();
+    const newProductsList = await ProductsDao.getAllProducts();
     console.log(newProductsList);
     io.emit("res", newProductsList);
     res.status(201).json(body);
@@ -52,7 +52,7 @@ router.put("/products/:pid", async (req, res) => {
   const { body } = req;
   const { pid } = req.params;
   try {
-    await productsDao.updateProduct(pid, body);
+    await ProductsDao.updateProduct(pid, body);
     res.status(200).send(body);
   } catch (error) {
     console.error("Error:", error);
@@ -62,7 +62,7 @@ router.put("/products/:pid", async (req, res) => {
 router.delete("/products/:pid", async (req, res) => {
   const { pid } = req.params;
   try {
-    await productsDao.deleteProduct(pid);
+    await ProductsDao.deleteProduct(pid);
     res.status(200).send("Articulo eliminado");
   } catch (error) {
     console.error("Error:", error);

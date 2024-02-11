@@ -1,5 +1,5 @@
 import productsModel from "./model/products.model.js";
-export default class productsDao {
+export default class ProductsDao {
   static async createNewProduct(newProduct) {
     return productsModel.create(newProduct);
   }

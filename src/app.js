@@ -19,10 +19,9 @@ import ProductManager from "./dao/ProductManager.js";
 
 //Conexión a la base de datos
 const uri = "mongodb://localhost:27017/ecommerce?authSource=admin"; //Poner el nombre del contenedor de mongo en docker en vez de localhost
-const options = { useNewUrlParser: true, useUnifiedTopology: true, family: 4 };
 mongoose.set("strictQuery", false);
 
-mongoose.connect(uri, options).then(
+mongoose.connect(uri).then(
   () => {
     console.log("Conectado a DB");
   },
