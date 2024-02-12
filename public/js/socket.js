@@ -11,7 +11,7 @@ function renderProducts(data) {
               <p class="text-gray-600">Código: ${p.code}</p>
               <p class="text-gray-600">Stock: ${p.stock}</p>
               <p class="text-gray-600">Categoría: ${p.category}</p>
-              <p class="text-gray-600">ID: ${p.id}</p>
+              <p class="text-gray-600">ID: ${p._id}</p>
           </div>
       </div>`;
   });

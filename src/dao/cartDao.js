@@ -31,13 +31,4 @@ export default class CartDao {
   static async getCartByID(_id) {
     return cartsModel.findOne({ _id }).lean().populate("products");
   }
-
-  static async updateCart(_id, modifiedCart) {
-    return cartsModel.findByIdAndUpdate(_id, modifiedCart, {
-      new: true,
-    });
-  }
-  static async deleteCart(_id) {
-    return cartsModel.findByIdAndDelete({ _id });
-  }
 }
