@@ -3,7 +3,11 @@ import ProductsDao from "../dao/productDao.js";
 const router = Router();
 
 router.get("/", async (req, res) => {
-  const data = await ProductsDao.getAllProducts();
+  res.redirect("/products");
+});
+router.get("/products", async (req, res) => {
+  const { query, limit, page, sort } = req.query;
+  const data = await ProductsDao.getAllProducts(query, page, limit, sort);
   res.render("home", { data });
 });
 
