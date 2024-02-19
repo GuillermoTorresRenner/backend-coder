@@ -30,9 +30,12 @@
     <!-- Listado de productos -->
     <div class="grid grid-cols-5 gap-4">
         {{#each data.payload}}
-        <div class="bg-white shadow-md rounded-md overflow-hidden">
+        <a href="/product/{{this.id}}">
+
+        <div class="bg-white shadow-xl rounded-xl overflow-hidden ">
             <div class="p-4">
                 <img src="{{this.thumbnails}}" alt="{{this.title}}" class="object-contain w-full h-48 mb-4">
+                <p>{{this.thumbnails}}</p>
                 <h2 class="text-xl font-semibold">{{this.title}}</h2>
                 <p class="text-gray-800 font-bold">${{this.price}}</p>
                 <p class="text-gray-600">Código: {{this.code}}</p>
@@ -40,6 +43,7 @@
                 <p class="text-gray-600">Categoría: {{this.category}}</p>
             </div>
         </div>
+        </a>
         {{/each}}
     </div>
 

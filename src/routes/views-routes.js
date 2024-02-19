@@ -10,6 +10,11 @@ router.get("/products", async (req, res) => {
   const data = await ProductsDao.getAllProducts(query, page, limit, sort);
   res.render("home", { data });
 });
+router.get("/product/:_id", async (req, res) => {
+  const { _id } = req.params;
+  const data = await ProductsDao.getProductByID(_id);
+  res.render("product", { data });
+});
 
 //Ruta para el socket
 router.get("/realtimeproducts", (req, res) => {
