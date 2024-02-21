@@ -1,5 +1,7 @@
 import { Router } from "express";
 import ProductsDao from "../dao/productDao.js";
+import CartDao from "../dao/cartDao.js";
+
 const router = Router();
 
 router.get("/", async (req, res) => {
@@ -14,6 +16,12 @@ router.get("/product/:_id", async (req, res) => {
   const { _id } = req.params;
   const data = await ProductsDao.getProductByID(_id);
   res.render("product", { data });
+});
+router.get("/cart/:_id", async (req, res) => {
+  const { _id } = req.params;
+  const data = await CartDao.getCartByID(_id);
+  console.log(data);
+  res.render("cart", { data });
 });
 
 //Ruta para el socket

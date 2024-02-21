@@ -29,6 +29,36 @@ export default class CartDao {
     }
   }
   static async getCartByID(_id) {
-    return cartsModel.findOne({ _id }).lean().populate("products");
+    return cartsModel.findOne({ _id }).populate("products.productId").lean();
+  }
+
+  static async deleteCartProductByID(cartID, productID) {
+    const cart = await cartsModel.findOne({ _id: cartID }).lean();
+    cart.products = cart.products.filter(
+      (product) => product.productId.toString() !== productID
+    );
+    return cartsModel.findByIdAndUpdate(cartID, cart, {
+      new: true,
+    });
+  }
+  static async deleteCartByID(cartID) {
+    return cartsModel.findByIdAndDelete({ _id: cartID });
+  }
+  static async updateCartByID(cartID, newData) {
+    const cart = await cartsModel.findOne({ _id: cartID }).lean();
+    cart.products = newData;
+    return cartsModel.findByIdAndUpdate(cartID, cart, {
+      new: true,
+    });
+  }
+  static async updateCartProductsByID(cartID, productID, quantity) {
+    const cart = await cartsModel.findOne({ _id: cartID }).lean();
+    cart.products = cart.products.filter(
+      (product) => product.productId !== productID
+    );
+    cart.products.push({ productId: productID, quantity });
+    return cartsModel.findByIdAndUpdate(cartID, cart, {
+      new: true,
+    });
   }
 }

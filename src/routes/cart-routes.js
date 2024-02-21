@@ -1,5 +1,6 @@
 import { Router } from "express";
 import CartDao from "../dao/cartDao.js";
+import cartsModel from "../dao/model/carts.model.js";
 const router = Router();
 
 router.get("/carts/:cid", async (req, res) => {
@@ -29,8 +30,64 @@ router.post("/carts/:cid/products/:pid", async (req, res) => {
   try {
     const data = await CartDao.addToCart(cid, pid, quantity);
     res.status(201).send(data);
+    console.log(data);
   } catch (error) {
     res.status(500).send(error.message);
+  }
+});
+
+router.delete("/carts/:cid/products/:pid", async (req, res) => {
+  const { cid, pid } = req.params;
+  try {
+    const data = await CartDao.deleteCartProductByID(cid, pid);
+    res.send(data);
+  } catch (error) {
+    res.send(error.message);
+  }
+});
+router.delete("/carts/:cid", async (req, res) => {
+  const { cid } = req.params;
+  try {
+    await CartDao.deleteCartByID(cid);
+    res.send(`cart ${cid} was deleted successfully`);
+  } catch (error) {
+    res.send(error.message);
+  }
+});
+router.put("/carts/:cid", async (req, res) => {
+  try {
+    const { products } = req.body;
+    const { cid } = req.params;
+
+    if (!Array.isArray(products)) {
+      return res.status(400).send({
+        error:
+          "El cuerpo de la solicitud debe contener un array de objetos de productos.",
+      });
+    }
+
+    const updatedCart = await CartDao.updateCartByID(cid, products);
+
+    res.send(updatedCart);
+  } catch (error) {
+    res.status(500).send({ error: "Internal server error." });
+  }
+});
+
+router.put("/carts/:cid/products/:pid", async (req, res) => {
+  try {
+    const { cid, pid } = req.params;
+    const { quantity } = req.body;
+    const updatedCart = await CartDao.updateCartProductsByID(
+      cid,
+      pid,
+      quantity
+    );
+    res.send(updatedCart);
+  } catch (error) {
+    res
+      .status(500)
+      .send({ error: "Internal server error.", description: error.message });
   }
 });
 
