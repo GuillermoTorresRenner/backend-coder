@@ -9,27 +9,14 @@ import "dotenv/config";
 import products from "./src/routes/products-routes.js";
 import cart from "./src/routes/cart-routes.js";
 import messages from "./src/routes/messages-routes.js";
+import routerSessions from "./src/routes/sessions-routes.js";
 import views from "./src/routes/views-routes.js";
 import { Server } from "socket.io";
 import ProductsDao from "./src/dao/productDao.js";
 import MessagesDao from "./src/dao/messagesDao.js";
-
-//Conexión a la base de datos
-// const uri = "mongodb://localhost:27017/ecommerce?authSource=admin"; //Poner el nombre del contenedor de mongo en docker en vez de localhost
-const uri =
-  "mongodb+srv://LeBateleur:Arcanum@ecommerce.zzmhvav.mongodb.net/ecommerce?retryWrites=true&w=majority";
-
-mongoose.set("strictQuery", false);
-
-mongoose.connect(uri).then(
-  () => {
-    console.log("Conectado a DB");
-  },
-  (err) => {
-    console.log(err);
-  }
-);
-
+import cookieParser from "cookie-parser";
+import session from "express-session";
+import MongoStore from "connect-mongo";
 //Servidor Http
 const app = express();
 const httpServer = app.listen(process.env.PORT || 3000, () => {
@@ -53,6 +40,21 @@ socketServer.on("connection", (socket) => {
   socket.emit("messages", mensajes);
 });
 
+//Conexión a la base de datos
+// const uri = "mongodb://localhost:27017/ecommerce?authSource=admin"; //Poner el nombre del contenedor de mongo en docker en vez de localhost
+const uri =
+  "mongodb+srv://LeBateleur:Arcanum@ecommerce.zzmhvav.mongodb.net/ecommerce?retryWrites=true&w=majority";
+
+mongoose.set("strictQuery", false);
+
+const mongo = mongoose.connect(uri).then(
+  () => {
+    console.log("Conectado a DB");
+  },
+  (err) => {
+    console.log(err);
+  }
+);
 //Exportación de socket.io para poder usarlo en los endpoints:
 export default socketServer;
 // Middleware
@@ -63,7 +65,20 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api", products);
 app.use("/api", cart);
 app.use("/api", messages);
+app.use("/api", routerSessions);
 app.use("/", views);
+app.use(cookieParser());
+app.use(
+  session({
+    secret: "secreto",
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: uri,
+      ttl: 60 * 60 * 24,
+    }),
+  })
+);
 
 // Configuración de templates de vistas
 app.engine("handlebars", handlebars.engine());

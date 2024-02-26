@@ -5,8 +5,15 @@ import CartDao from "../dao/cartDao.js";
 const router = Router();
 
 router.get("/", async (req, res) => {
-  res.redirect("/products");
+  res.redirect("/login");
 });
+router.get("/login", async (req, res) => {
+  res.render("login");
+});
+router.get("/register", async (req, res) => {
+  res.render("register");
+});
+
 router.get("/products", async (req, res) => {
   const { query, limit, page, sort } = req.query;
   const data = await ProductsDao.getAllProducts(query, page, limit, sort);
