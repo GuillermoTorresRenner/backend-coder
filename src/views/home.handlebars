@@ -1,3 +1,22 @@
+<nav class="bg-gray-800 p-4">
+    <div class="flex items-center justify-between">
+        <div class="flex items-center">
+            <span class="text-white font-semibold text-lg">Mi Aplicación</span>
+            {{#if userData}}
+            <span class="text-white ml-4">Bienvenido, {{userData.first_name}} {{userData.last_name}}</span>
+            {{/if}}
+        </div>
+        {{#if userData}}
+        <a href="/api/sessions/logout" id="logout" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded">
+            Logout
+        </a>
+        {{/if}}
+    </div>
+</nav>
+
+
+
+
 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <h1 class="text-center text-4xl font-bold my-10">INFUZION MARKET</h1>
 
@@ -74,4 +93,9 @@
 
         window.location.href = `/products?query=${JSON.stringify(query)}`;
     }
+
+     
+
+        
+                
 </script>

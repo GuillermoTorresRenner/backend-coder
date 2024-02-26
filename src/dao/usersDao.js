@@ -10,7 +10,7 @@ export default class UsersDao {
   }
   static async getUserByID(_id) {
     return usersModel
-      .findOne({ _id }, { first_name: 1, last_name: 1, age: 1, email: 1 })
+      .findOne({ _id }, { first_name: 1, last_name: 1, email: 1, age: 1 })
       .lean();
   }
 }

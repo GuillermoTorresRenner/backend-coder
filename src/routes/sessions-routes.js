@@ -7,12 +7,16 @@ router.post("/sessions/register", async (req, res) => {
   try {
     const { first_name, last_name, email, age, password } = req.body;
     await UsersDao.register(first_name, last_name, email, age, password);
-
     res.redirect("/login");
   } catch (error) {
     console.error("Error:", error);
     res.status(500).send("Error interno del servidor");
   }
+});
+router.get("/sessions/logout", (req, res) => {
+  req.session.destroy((err) => {
+    res.redirect("/");
+  });
 });
 router.post("/sessions/login", async (req, res) => {
   try {
@@ -21,8 +25,7 @@ router.post("/sessions/login", async (req, res) => {
     if (user) {
       const login = bcrypt.compareSync(password, user.password);
       if (login) {
-        ///////////////////////////PROBLEMA//////////////////////////////////////////
-        req.session.saludo = "hola";
+        req.session.userId = user._id;
         res.redirect("/products");
       }
     } else {

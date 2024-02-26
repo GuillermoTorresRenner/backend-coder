@@ -47,7 +47,7 @@ const uri =
 
 mongoose.set("strictQuery", false);
 
-const mongo = mongoose.connect(uri).then(
+mongoose.connect(uri).then(
   () => {
     console.log("Conectado a DB");
   },
@@ -58,15 +58,6 @@ const mongo = mongoose.connect(uri).then(
 //Exportación de socket.io para poder usarlo en los endpoints:
 export default socketServer;
 // Middleware
-app.use(morgan("tiny"));
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use("/api", products);
-app.use("/api", cart);
-app.use("/api", messages);
-app.use("/api", routerSessions);
-app.use("/", views);
 app.use(cookieParser());
 app.use(
   session({
@@ -79,6 +70,15 @@ app.use(
     }),
   })
 );
+app.use(morgan("tiny"));
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use("/api", products);
+app.use("/api", cart);
+app.use("/api", messages);
+app.use("/api", routerSessions);
+app.use("/", views);
 
 // Configuración de templates de vistas
 app.engine("handlebars", handlebars.engine());
