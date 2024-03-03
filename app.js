@@ -17,6 +17,8 @@ import MessagesDao from "./src/dao/messagesDao.js";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import MongoStore from "connect-mongo";
+import passport from "passport";
+import initializaPassport from "./src/utils/passport.config.js";
 
 //Servidor Http
 const app = express();
@@ -71,6 +73,9 @@ app.use(
     }),
   })
 );
+initializaPassport();
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());

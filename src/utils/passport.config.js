@@ -1,43 +1,79 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import UsersDao from "../dao/usersDao.js";
-passport.use(
-  new LocalStrategy(
-    {
-      passReqToCallback: true,
-      usernameField: "email",
-      passwordField: "password",
-    },
-    async (req, email, password, done) => {
-      try {
-        const { first_name, last_name, age } = req.body;
-        const user = await UsersDao.getUserByEmail(email);
+import PasswordManagement from "./passwordManagement.js";
+const initializaPassport = () => {
+  passport.use(
+    "register",
+    new LocalStrategy(
+      {
+        passReqToCallback: true,
+        usernameField: "email",
+      },
+      async (req, email, password, done) => {
+        try {
+          let { first_name, last_name, age } = req.body;
+          age = parseInt(age);
+          if (!first_name || !last_name || !email || !password || !age) {
+            return done(null, false);
+          }
+          const emailUsed = await UsersDao.getUserByEmail(email);
 
-        if (!user || !user.validatePassword(password)) {
-          return done(null, false, {
-            message: "Correo electrónico o contraseña incorrectos.",
-          });
+          if (emailUsed) {
+            return done(null, false);
+          }
+
+          const user = UsersDao.register(
+            first_name,
+            last_name,
+            email,
+            age,
+            password
+          );
+          return done(null, user);
+        } catch (error) {
+          return done(error);
         }
-
-        return done(null, user);
-      } catch (error) {
-        return done(error);
       }
+    )
+  );
+  passport.use(
+    "login",
+    new LocalStrategy(
+      {
+        usernameField: "email",
+      },
+      async (email, password, done) => {
+        try {
+          if (!email || !password) {
+            return done(null, false);
+          }
+
+          const user = await UsersDao.getUserByEmail(email);
+          if (PasswordManagement.validatePassword(password, user?.password)) {
+            return done(null, user);
+          } else {
+            return done(null, false);
+          }
+        } catch (error) {
+          return done(error);
+        }
+      }
+    )
+  );
+
+  passport.serializeUser((user, done) => {
+    done(null, user._id);
+  });
+
+  passport.deserializeUser(async (_id, done) => {
+    try {
+      const user = await UsersDao.getUserByID(_id);
+      done(null, user);
+    } catch (error) {
+      done(error);
     }
-  )
-);
+  });
+};
 
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
-
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await User.findById(id);
-    done(null, user);
-  } catch (error) {
-    done(error);
-  }
-});
-
-export default passport;
+export default initializaPassport;

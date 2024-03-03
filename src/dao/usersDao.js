@@ -1,8 +1,8 @@
 import usersModel from "./model/users.model.js";
-import bcrypt from "bcrypt";
+import PasswordManagement from "../utils/passwordManagement.js";
 export default class UsersDao {
   static async register(first_name, last_name, email, age, password) {
-    password = bcrypt.hashSync(password, 10);
+    password = PasswordManagement.hashPassword(password);
     return usersModel.create({ first_name, last_name, email, age, password });
   }
   static async getUserByEmail(email) {
@@ -15,7 +15,7 @@ export default class UsersDao {
   }
   static async restorePasswordWithEmail(email, password) {
     const user = await usersModel.findOne({ email }).lean();
-    user.password = bcrypt.hashSync(password, 10);
+    user.password = PasswordManagement.hashPassword(password);
     console.log(user);
     return usersModel.findByIdAndUpdate(user._id, user, {
       new: true,
