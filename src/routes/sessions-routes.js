@@ -13,6 +13,16 @@ router.post("/sessions/register", async (req, res) => {
     res.status(500).send("Error interno del servidor");
   }
 });
+router.post("/sessions/restore", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    await UsersDao.restorePasswordWithEmail(email, password);
+    res.redirect("/login");
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Error interno del servidor");
+  }
+});
 router.get("/sessions/logout", (req, res) => {
   req.session.destroy((err) => {
     res.redirect("/");

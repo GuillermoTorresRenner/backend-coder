@@ -17,6 +17,7 @@ import MessagesDao from "./src/dao/messagesDao.js";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import MongoStore from "connect-mongo";
+
 //Servidor Http
 const app = express();
 const httpServer = app.listen(process.env.PORT || 3000, () => {
