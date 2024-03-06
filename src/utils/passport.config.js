@@ -2,7 +2,10 @@ import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import UsersDao from "../dao/usersDao.js";
 import PasswordManagement from "./passwordManagement.js";
+import GithubStrategy from "passport-github2";
+import { v4 as uuidv4 } from "uuid";
 const initializaPassport = () => {
+  //Register local
   passport.use(
     "register",
     new LocalStrategy(
@@ -37,6 +40,8 @@ const initializaPassport = () => {
       }
     )
   );
+
+  // Login Local
   passport.use(
     "login",
     new LocalStrategy(
@@ -62,6 +67,46 @@ const initializaPassport = () => {
     )
   );
 
+  passport.use(
+    "github",
+    new GithubStrategy(
+      {
+        clientID: "Iv1.a4e074b7057f062f",
+        clientSecret: "3fca71b77346b74b1be965509b45134fd2f92350",
+        callbackURL: "http://localhost:8080/api/sessions/githubCallback",
+      },
+      async (accessToken, refreshToken, profile, done) => {
+        try {
+          console.log(profile._json);
+          const user = await UsersDao.getUserByEmail(profile._json.email || "");
+          if (!user) {
+            const newUser = {
+              first_name: profile._json.name,
+              last_name: " ",
+              age: 18,
+              email: profile._json.email ? profile._json.email : uuidv4(),
+              password: " ",
+            };
+
+            const result = await UsersDao.register(
+              newUser.first_name,
+              newUser.last_name,
+              newUser.email,
+              newUser.age,
+              newUser.password
+            );
+            done(null, result);
+          } else {
+            done(null, user);
+          }
+        } catch (error) {
+          return done(error);
+        }
+      }
+    )
+  );
+
+  //Serializadores
   passport.serializeUser((user, done) => {
     done(null, user._id);
   });

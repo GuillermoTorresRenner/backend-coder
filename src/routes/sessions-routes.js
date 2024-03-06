@@ -50,4 +50,18 @@ router.post(
   }
 );
 
+router.get(
+  "/sessions/github",
+  passport.authenticate("github", { scope: ["user:email"] })
+);
+
+router.get(
+  "/sessions/githubCallback",
+  passport.authenticate("github", { failureRedirect: "/login" }),
+  (req, res) => {
+    req.session.userId = req.user._id;
+    res.redirect("/products");
+  }
+);
+
 export default router;
