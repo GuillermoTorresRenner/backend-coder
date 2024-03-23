@@ -1,4 +1,4 @@
-import productsModel from "./model/products.model.js";
+import productsModel from "../model/products.model.js";
 export default class ProductsDao {
   static async createNewProduct(newProduct) {
     return productsModel.create(newProduct);

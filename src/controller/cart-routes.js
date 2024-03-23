@@ -1,6 +1,5 @@
 import { Router } from "express";
 import CartDao from "../dao/cartDao.js";
-import cartsModel from "../dao/model/carts.model.js";
 const router = Router();
 
 router.get("/carts/:cid", async (req, res) => {

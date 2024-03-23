@@ -9,8 +9,6 @@ router.post("/messages", async (req, res) => {
     await MessagesDao.createNewMessage(body);
     const allMesagges = await MessagesDao.getAllMessages();
     io.emit("messages", allMesagges);
-    // res.status(201).json(body);
-    // res.redirect("/");
   } catch (error) {
     res.status(500).send(error.message);
   }

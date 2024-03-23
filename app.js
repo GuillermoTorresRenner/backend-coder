@@ -6,10 +6,10 @@ import cors from "cors";
 import handlebars from "express-handlebars";
 import __dirname from "./__dirname.js";
 import "dotenv/config";
-import products from "./src/routes/products-routes.js";
-import cart from "./src/routes/cart-routes.js";
-import messages from "./src/routes/messages-routes.js";
-import routerSessions from "./src/routes/sessions-routes.js";
+import products from "./src/controller/products-routes.js";
+import cart from "./src/controller/cart-routes.js";
+import messages from "./src/controller/messages-routes.js";
+import routerSessions from "./src/controller/sessions-routes.js";
 import views from "./src/routes/views-routes.js";
 import { Server } from "socket.io";
 import ProductsDao from "./src/dao/productDao.js";
@@ -44,10 +44,7 @@ socketServer.on("connection", (socket) => {
 });
 
 //Conexión a la base de datos
-// const uri = "mongodb://localhost:27017/ecommerce?authSource=admin"; //Poner el nombre del contenedor de mongo en docker en vez de localhost
-const uri =
-  "mongodb+srv://LeBateleur:Arcanum@ecommerce.zzmhvav.mongodb.net/ecommerce?retryWrites=true&w=majority";
-
+const uri = process.env.MONGO_URI;
 mongoose.set("strictQuery", false);
 
 mongoose.connect(uri).then(
@@ -64,7 +61,7 @@ export default socketServer;
 app.use(cookieParser());
 app.use(
   session({
-    secret: "secreto",
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({

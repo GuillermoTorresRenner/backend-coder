@@ -1,4 +1,4 @@
-import usersModel from "./model/users.model.js";
+import usersModel from "../model/users.model.js";
 import PasswordManagement from "../utils/passwordManagement.js";
 export default class UsersDao {
   static async register(first_name, last_name, email, age, password) {

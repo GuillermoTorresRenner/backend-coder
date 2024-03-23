@@ -1,4 +1,4 @@
-import cartsModel from "./model/carts.model.js";
+import cartsModel from "../model/carts.model.js";
 export default class CartDao {
   static async createNewcart() {
     return cartsModel.create({});
