@@ -1,5 +1,5 @@
 import { Router } from "express";
-import ProductsDao from "../dao/productDao.js";
+import { ProductsServices } from "../repositories/Repositories.js";
 import multer from "multer";
 import io from "../../app.js";
 import { v4 as uuidv4 } from "uuid";
@@ -37,7 +37,12 @@ router.get("/products", async (req, res) => {
   const { query, limit, page, sort } = req.query;
 
   try {
-    const data = await ProductsDao.getAllProducts(query, page, limit, sort);
+    const data = await ProductsServices.getAllProducts(
+      query,
+      page,
+      limit,
+      sort
+    );
     res.status(200).send(data);
   } catch (error) {
     console.error("Error:", error);
@@ -48,7 +53,7 @@ router.get("/products", async (req, res) => {
 router.get("/products/:pid", async (req, res) => {
   const { pid } = req.params;
   try {
-    const data = await ProductsDao.getProductByID(pid);
+    const data = await ProductsServices.getProductByID(pid);
     res.status(200).send(data);
   } catch (error) {
     console.error("Error:", error);
@@ -70,9 +75,9 @@ router.post("/products", upload.single("img"), async (req, res) => {
   body.thumbnails = "images/products/" + file.trim();
 
   try {
-    await ProductsDao.createNewProduct(body);
+    await ProductsServices.createNewProduct(body);
 
-    const newProductsList = await ProductsDao.getAllProducts();
+    const newProductsList = await ProductsServices.getAllProducts();
     console.log(newProductsList);
     io.emit("res", newProductsList);
     // res.status(201).json(body);
@@ -86,7 +91,7 @@ router.put("/products/:pid", async (req, res) => {
   const { body } = req;
   const { pid } = req.params;
   try {
-    await ProductsDao.updateProduct(pid, body);
+    await ProductsServices.updateProduct(pid, body);
     res.status(200).send(body);
   } catch (error) {
     console.error("Error:", error);
@@ -96,7 +101,7 @@ router.put("/products/:pid", async (req, res) => {
 router.delete("/products/:pid", async (req, res) => {
   const { pid } = req.params;
   try {
-    await ProductsDao.deleteProduct(pid);
+    await ProductsServices.deleteProduct(pid);
     res.status(200).send("Articulo eliminado");
   } catch (error) {
     console.error("Error:", error);

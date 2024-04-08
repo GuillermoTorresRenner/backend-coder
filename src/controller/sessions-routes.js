@@ -1,5 +1,5 @@
 import { Router } from "express";
-import UsersDao from "../dao/usersDao.js";
+import { UserServices } from "../repositories/Repositories.js";
 import passport from "passport";
 const router = Router();
 
@@ -17,7 +17,7 @@ router.post(
 router.post("/sessions/restore", async (req, res) => {
   try {
     const { email, password } = req.body;
-    await UsersDao.restorePasswordWithEmail(email, password);
+    await UserServices.restorePasswordWithEmail(email, password);
     res.redirect("/login");
   } catch (error) {
     console.error("Error:", error);
@@ -49,6 +49,22 @@ router.post(
     }
   }
 );
+router.get("/sessions/current", async (req, res) => {
+  try {
+    const userId = req.session.userId;
+
+    if (userId) {
+      const currentUser = await UserServices.getUserByID(userId);
+      res.status(200).send(currentUser);
+    } else {
+      res.status(401).send({ message: "No active session" });
+    }
+  } catch (error) {
+    // Manejo de errores
+    console.error("Error:", error);
+    res.status(500).send({ status: "error", message: "Internal server error" });
+  }
+});
 
 router.get(
   "/sessions/github",
@@ -64,4 +80,16 @@ router.get(
   }
 );
 
+passport.serializeUser((user, done) => {
+  done(null, user._id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await UserServices.getUserByID(id);
+    done(null, user);
+  } catch (error) {
+    done(error);
+  }
+});
 export default router;
