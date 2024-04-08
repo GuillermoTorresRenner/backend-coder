@@ -1,4 +1,6 @@
 import cartsModel from "../model/carts.model.js";
+import productsModel from "../model/products.model.js";
+import { ProductsServices } from "../repositories/Repositories.js";
 export default class CartDao {
   static async createNewcart() {
     return cartsModel.create({});
@@ -29,7 +31,11 @@ export default class CartDao {
     }
   }
   static async getCartByID(_id) {
-    return cartsModel.findOne({ _id }).populate("products.productId").lean();
+    const cart = await cartsModel
+      .findOne({ _id })
+      .populate("products.productId")
+      .lean();
+    return cart;
   }
 
   static async deleteCartProductByID(cartID, productID) {
@@ -60,5 +66,25 @@ export default class CartDao {
     return cartsModel.findByIdAndUpdate(cartID, cart, {
       new: true,
     });
+  }
+  static async purchase(cartID) {
+    const cart = await this.getCartByID(cartID);
+    const ids = [];
+
+    cart.products.map((p) => ids.push(p.productId));
+    let amount = 0;
+    const products = await ProductsServices.getProductsByManyIDs(ids);
+    const leftiesCart = [];
+    for (let i = 0; i < products.length; i++) {
+      if (products[i].stock >= cart.products[i].quantity) {
+        const newQuantity = products[i].stock - cart.products[i].quantity;
+        amount += products[i].price * cart.products[i].quantity;
+        await ProductsServices.consumeStock(products[i]._id, newQuantity);
+      } else {
+        leftiesCart.push(cart.products[i].productId._id);
+      }
+    }
+
+    return { leftiesCart, amount };
   }
 }

@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { CartServices } from "../repositories/Repositories.js";
+import {
+  CartServices,
+  TicketsServices,
+  UserServices,
+} from "../repositories/Repositories.js";
 import { onlyUsersAccess } from "../middlewares/permissions.js";
 const router = Router();
 
@@ -89,6 +93,25 @@ router.put("/carts/:cid/products/:pid", onlyUsersAccess, async (req, res) => {
       .status(500)
       .send({ error: "Internal server error.", description: error.message });
   }
+});
+router.post("/carts/:cid/purchase", async (req, res) => {
+  const { cid } = req.params;
+  try {
+    const transaction = await CartServices.purchase(cid);
+    const userId = req.session.userId;
+    const user = await UserServices.getUserByID(userId);
+    const ticketData = {
+      amount: transaction.amount,
+      purchaser: user.email,
+    };
+    let ticket = await TicketsServices.createNewTicket(ticketData);
+
+    if (transaction.leftiesCart) {
+      ticket = { ...ticket._doc, productsOutOfStock: transaction.leftiesCart };
+    }
+
+    res.status(200).send(ticket);
+  } catch (error) {}
 });
 
 export default router;

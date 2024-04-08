@@ -34,7 +34,7 @@ export default class ProductsDao {
     return res;
   }
   static async getProductByID(_id) {
-    return productsModel.findOne({ _id }).lean();
+    return await productsModel.findOne({ _id }).lean();
   }
   static async getAllProductswhitLimits(limit) {
     return productsModel.find().limit(limit).lean();
@@ -46,5 +46,16 @@ export default class ProductsDao {
   }
   static async deleteProduct(_id) {
     return productsModel.findByIdAndDelete({ _id });
+  }
+
+  static async getProductsByManyIDs(ids) {
+    return await productsModel.find({ _id: { $in: ids } });
+  }
+  static async consumeStock(_id, newQuantity) {
+    return productsModel.findOneAndUpdate(
+      { _id },
+      { $set: { stock: newQuantity } },
+      { new: true }
+    );
   }
 }

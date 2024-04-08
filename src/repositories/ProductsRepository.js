@@ -19,4 +19,10 @@ export default class ProductsRepository {
   static async deleteProduct(_id) {
     return await ProductsDao.deleteProduct(_id);
   }
+  static async getProductsByManyIDs(ids) {
+    return await ProductsDao.getProductsByManyIDs(ids);
+  }
+  static async consumeStock(_id, newQuantity) {
+    return await ProductsDao.consumeStock(_id, newQuantity);
+  }
 }

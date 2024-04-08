@@ -3,7 +3,7 @@ export const onlyAdminAccess = async (req, res, next) => {
   try {
     const permission = await UserServices.getRoleByID(req.session.userId);
 
-    if (permission === "ADMIN") {
+    if (permission.role === "ADMIN") {
       next();
     } else {
       res.status(403).send("FORBIDDEN ACCESS");
@@ -13,8 +13,7 @@ export const onlyAdminAccess = async (req, res, next) => {
 export const onlyUsersAccess = async (req, res, next) => {
   try {
     const permission = await UserServices.getRoleByID(req.session.userId);
-
-    if (permission === "USER") {
+    if (permission.role === "USER") {
       next();
     } else {
       res.status(403).send("FORBIDDEN ACCESS");
