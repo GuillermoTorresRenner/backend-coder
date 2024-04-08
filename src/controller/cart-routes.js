@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { CartServices } from "../repositories/Repositories.js";
+import { onlyUsersAccess } from "../middlewares/permissions.js";
 const router = Router();
 
 router.get("/carts/:cid", async (req, res) => {
@@ -23,7 +24,7 @@ router.post("/carts", async (req, res) => {
     res.status(500).send(error.message);
   }
 });
-router.post("/carts/:cid/products/:pid", async (req, res) => {
+router.post("/carts/:cid/products/:pid", onlyUsersAccess, async (req, res) => {
   const { quantity } = req.body;
   const { cid, pid } = req.params;
   try {
@@ -53,7 +54,7 @@ router.delete("/carts/:cid", async (req, res) => {
     res.send(error.message);
   }
 });
-router.put("/carts/:cid", async (req, res) => {
+router.put("/carts/:cid", onlyUsersAccess, async (req, res) => {
   try {
     const { products } = req.body;
     const { cid } = req.params;
@@ -73,7 +74,7 @@ router.put("/carts/:cid", async (req, res) => {
   }
 });
 
-router.put("/carts/:cid/products/:pid", async (req, res) => {
+router.put("/carts/:cid/products/:pid", onlyUsersAccess, async (req, res) => {
   try {
     const { cid, pid } = req.params;
     const { quantity } = req.body;

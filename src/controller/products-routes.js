@@ -4,6 +4,7 @@ import multer from "multer";
 import io from "../../app.js";
 import { v4 as uuidv4 } from "uuid";
 import path from "path";
+import { onlyAdminAccess } from "../middlewares/permissions.js";
 
 const router = Router();
 
@@ -61,33 +62,38 @@ router.get("/products/:pid", async (req, res) => {
   }
 });
 
-router.post("/products", upload.single("img"), async (req, res) => {
-  const { body } = req;
-  !body.title && res.send("El título es requerido");
-  !body.description && res.send("La descripción es requerida");
-  !body.price && res.send("El precio es requerido");
-  !body.code && res.send("El código es requerido");
-  !body.stock && res.send("El stock es requerido");
-  !body.category && res.send("La categoría es requerida");
-  const file = req.file.filename;
-  console.log("NOMBRE DE ARCHIVO", req.file.filename);
-  !file && res.send("Imagen de producto requerida");
-  body.thumbnails = "images/products/" + file.trim();
+router.post(
+  "/products",
+  upload.single("img"),
+  onlyAdminAccess,
+  async (req, res) => {
+    const { body } = req;
+    !body.title && res.send("El título es requerido");
+    !body.description && res.send("La descripción es requerida");
+    !body.price && res.send("El precio es requerido");
+    !body.code && res.send("El código es requerido");
+    !body.stock && res.send("El stock es requerido");
+    !body.category && res.send("La categoría es requerida");
+    const file = req.file.filename;
+    console.log("NOMBRE DE ARCHIVO", req.file.filename);
+    !file && res.send("Imagen de producto requerida");
+    body.thumbnails = "images/products/" + file.trim();
 
-  try {
-    await ProductsServices.createNewProduct(body);
+    try {
+      await ProductsServices.createNewProduct(body);
 
-    const newProductsList = await ProductsServices.getAllProducts();
-    console.log(newProductsList);
-    io.emit("res", newProductsList);
-    // res.status(201).json(body);
-    res.redirect("/");
-  } catch (error) {
-    res.status(500).send(error.message);
+      const newProductsList = await ProductsServices.getAllProducts();
+      console.log(newProductsList);
+      io.emit("res", newProductsList);
+      // res.status(201).json(body);
+      res.redirect("/");
+    } catch (error) {
+      res.status(500).send(error.message);
+    }
   }
-});
+);
 
-router.put("/products/:pid", async (req, res) => {
+router.put("/products/:pid", onlyAdminAccess, async (req, res) => {
   const { body } = req;
   const { pid } = req.params;
   try {
@@ -98,7 +104,7 @@ router.put("/products/:pid", async (req, res) => {
     res.status(500).send("Error interno del servidor");
   }
 });
-router.delete("/products/:pid", async (req, res) => {
+router.delete("/products/:pid", onlyAdminAccess, async (req, res) => {
   const { pid } = req.params;
   try {
     await ProductsServices.deleteProduct(pid);

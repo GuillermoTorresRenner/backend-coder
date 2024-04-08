@@ -13,6 +13,9 @@ export default class UsersDao {
       .findOne({ _id }, { first_name: 1, last_name: 1, email: 1, age: 1 })
       .lean();
   }
+  static async getRoleByID(_id) {
+    return usersModel.findOne({ _id }, { role: 1 }).lean();
+  }
   static async restorePasswordWithEmail(email, password) {
     const user = await usersModel.findOne({ email }).lean();
     user.password = PasswordManagement.hashPassword(password);

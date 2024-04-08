@@ -17,4 +17,7 @@ export default class UsersRepository {
   static async restorePasswordWithEmail(email, password) {
     return await UsersDao.restorePasswordWithEmail(email, password);
   }
+  static async getRoleByID(_id) {
+    return UsersDao.getRoleByID(_id);
+  }
 }
