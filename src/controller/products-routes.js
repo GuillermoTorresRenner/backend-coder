@@ -1,5 +1,8 @@
 import { Router } from "express";
-import { ProductsServices } from "../repositories/Repositories.js";
+import {
+  MockingProductsServices,
+  ProductsServices,
+} from "../repositories/Repositories.js";
 import multer from "multer";
 import io from "../../app.js";
 import { v4 as uuidv4 } from "uuid";
@@ -109,6 +112,16 @@ router.delete("/products/:pid", onlyAdminAccess, async (req, res) => {
   try {
     await ProductsServices.deleteProduct(pid);
     res.status(200).send("Articulo eliminado");
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Error interno del servidor");
+  }
+});
+
+router.get("/mockingproducts", async (req, res) => {
+  try {
+    const fakeProducts = MockingProductsServices.getProducts();
+    res.status(200).send(fakeProducts);
   } catch (error) {
     console.error("Error:", error);
     res.status(500).send("Error interno del servidor");
