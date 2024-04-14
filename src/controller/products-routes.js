@@ -8,6 +8,10 @@ import io from "../../app.js";
 import { v4 as uuidv4 } from "uuid";
 import path from "path";
 import { onlyAdminAccess } from "../middlewares/permissions.js";
+import {
+  InsufficientDataError,
+  ProductNotFoundError,
+} from "../utils/CustomErrors.js";
 
 const router = Router();
 
@@ -47,21 +51,33 @@ router.get("/products", async (req, res) => {
       limit,
       sort
     );
+    if (!data) throw ProductNotFoundError();
     res.status(200).send(data);
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).send("Error interno del servidor");
+    if (error instanceof ProductNotFoundError) {
+      res.status(error.statusCode).send(error.getErrorData());
+    } else {
+      res.status(500).send("Internal server error");
+    }
   }
 });
 
 router.get("/products/:pid", async (req, res) => {
-  const { pid } = req.params;
   try {
+    const { pid } = req.params;
+    if (!pid) throw new InsufficientDataError("product", ["ProductID"]);
     const data = await ProductsServices.getProductByID(pid);
+    if (!pid) throw new ProductNotFoundError();
+
     res.status(200).send(data);
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).send("Error interno del servidor");
+    if (error instanceof InsufficientDataError) {
+      res.status(error.statusCode).send(error.getErrorData());
+    } else if (error instanceof ProductNotFoundError) {
+      res.status(error.statusCode).send(error.getErrorData());
+    } else {
+      res.status(500).send("Internal server error");
+    }
   }
 });
 
@@ -70,61 +86,109 @@ router.post(
   upload.single("img"),
   onlyAdminAccess,
   async (req, res) => {
-    const { body } = req;
-    !body.title && res.send("El título es requerido");
-    !body.description && res.send("La descripción es requerida");
-    !body.price && res.send("El precio es requerido");
-    !body.code && res.send("El código es requerido");
-    !body.stock && res.send("El stock es requerido");
-    !body.category && res.send("La categoría es requerida");
-    const file = req.file.filename;
-    console.log("NOMBRE DE ARCHIVO", req.file.filename);
-    !file && res.send("Imagen de producto requerida");
-    body.thumbnails = "images/products/" + file.trim();
-
     try {
+      const { body } = req;
+      const { title, description, price, code, stock, category } = body;
+      const file = req.file.filename;
+      if (
+        !title ||
+        !description ||
+        !price ||
+        !code ||
+        !stock ||
+        !category ||
+        !file
+      )
+        throw InsufficientDataError("product", [
+          "title",
+          "description",
+          "price",
+          "code",
+          "stock",
+          "category",
+          "product img",
+        ]);
+
+      body.thumbnails = "images/products/" + file.trim();
       await ProductsServices.createNewProduct(body);
 
       const newProductsList = await ProductsServices.getAllProducts();
-      console.log(newProductsList);
+      if (!newProductsList) throw new ProductNotFoundError();
       io.emit("res", newProductsList);
-      // res.status(201).json(body);
       res.redirect("/");
     } catch (error) {
-      res.status(500).send(error.message);
+      if (error instanceof InsufficientDataError) {
+        res.status(error.statusCode).send(error.getErrorData());
+      } else if (error instanceof ProductNotFoundError) {
+        res.status(error.statusCode).send(error.getErrorData());
+      } else {
+        res.status(500).send("Internal server error");
+      }
     }
   }
 );
 
 router.put("/products/:pid", onlyAdminAccess, async (req, res) => {
-  const { body } = req;
-  const { pid } = req.params;
   try {
+    const { body } = req;
+    const { pid } = req.params;
+    /////////////
+    const { title, description, price, code, stock, category } = body;
+    if (
+      !pid ||
+      !title ||
+      !description ||
+      !price ||
+      !code ||
+      !stock ||
+      !category
+    )
+      throw InsufficientDataError("product", [
+        "ProductID",
+        "title",
+        "description",
+        "price",
+        "code",
+        "stock",
+        "category",
+      ]);
+
     await ProductsServices.updateProduct(pid, body);
     res.status(200).send(body);
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).send("Error interno del servidor");
+    if (error instanceof InsufficientDataError) {
+      res.status(error.statusCode).send(error.getErrorData());
+    } else {
+      res.status(500).send("Internal server error");
+    }
   }
 });
 router.delete("/products/:pid", onlyAdminAccess, async (req, res) => {
-  const { pid } = req.params;
   try {
+    const { pid } = req.params;
+    if (!pid) throw new InsufficientDataError("product", ["ProductID"]);
     await ProductsServices.deleteProduct(pid);
     res.status(200).send("Articulo eliminado");
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).send("Error interno del servidor");
+    if (error instanceof InsufficientDataError) {
+      res.status(error.statusCode).send(error.getErrorData());
+    } else {
+      res.status(500).send("Internal server error");
+    }
   }
 });
 
 router.get("/mockingproducts", async (req, res) => {
   try {
     const fakeProducts = MockingProductsServices.getProducts();
+    if (!fakeProducts) throw ProductNotFoundError();
     res.status(200).send(fakeProducts);
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).send("Error interno del servidor");
+    if (error instanceof ProductNotFoundError) {
+      res.status(error.statusCode).send(error.getErrorData());
+    } else {
+      res.status(500).send("Internal server error");
+    }
   }
 });
 

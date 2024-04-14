@@ -6,7 +6,7 @@ export class InsufficientDataError extends Error {
     this.message = `Insufficient required data for ${entity}: ${requiredData.map(
       (d) => d
     )}`;
-    this.statusCode = 400; // Change status code to 400 Bad Request
+    this.statusCode = 400;
     this.name = this.constructor.name;
     Error.captureStackTrace(this, this.constructor);
   }
@@ -91,6 +91,106 @@ export class CartNotFoundError extends Error {
     };
   }
 }
+export class CartNotCreatedError extends Error {
+  constructor() {
+    super();
+    this.message = "The cart could not be created";
+    this.statusCode = 500;
+    this.name = this.constructor.name;
+    Error.captureStackTrace(this, this.constructor);
+  }
+  getErrorData() {
+    console.log("Error:", {
+      name: this.name,
+      message: this.message,
+      statusCode: this.statusCode,
+    });
+    return {
+      status: this.statusCode,
+      message: this.message,
+    };
+  }
+}
+export class ProductCartNotDeletedError extends Error {
+  constructor() {
+    super();
+    this.message = "The product was not deleted from cart";
+    this.statusCode = 500;
+    this.name = this.constructor.name;
+    Error.captureStackTrace(this, this.constructor);
+  }
+  getErrorData() {
+    console.log("Error:", {
+      name: this.name,
+      message: this.message,
+      statusCode: this.statusCode,
+    });
+    return {
+      status: this.statusCode,
+      message: this.message,
+    };
+  }
+}
+export class CartNotUpdatedError extends Error {
+  constructor() {
+    super();
+    this.message = "The cart was not updated";
+    this.statusCode = 500;
+    this.name = this.constructor.name;
+    Error.captureStackTrace(this, this.constructor);
+  }
+  getErrorData() {
+    console.log("Error:", {
+      name: this.name,
+      message: this.message,
+      statusCode: this.statusCode,
+    });
+    return {
+      status: this.statusCode,
+      message: this.message,
+    };
+  }
+}
+export class CartNotBuyError extends Error {
+  constructor() {
+    super();
+    this.message = "The cart was not buy it";
+    this.statusCode = 500;
+    this.name = this.constructor.name;
+    Error.captureStackTrace(this, this.constructor);
+  }
+  getErrorData() {
+    console.log("Error:", {
+      name: this.name,
+      message: this.message,
+      statusCode: this.statusCode,
+    });
+    return {
+      status: this.statusCode,
+      message: this.message,
+    };
+  }
+}
+export class TicketNotCreatedError extends Error {
+  constructor() {
+    super();
+    this.message = "The ticket was not created";
+    this.statusCode = 500;
+    this.name = this.constructor.name;
+    Error.captureStackTrace(this, this.constructor);
+  }
+  getErrorData() {
+    console.log("Error:", {
+      name: this.name,
+      message: this.message,
+      statusCode: this.statusCode,
+    });
+    return {
+      status: this.statusCode,
+      message: this.message,
+    };
+  }
+}
 
 //_______________________________________Authentication Errors_______________________________________________________________________
 
@@ -98,7 +198,7 @@ export class AuthenticationError extends Error {
   constructor() {
     super();
     this.message = "Authentication failed";
-    this.statusCode = 401; // Unauthorized
+    this.statusCode = 401;
     this.name = this.constructor.name;
     Error.captureStackTrace(this, this.constructor);
   }

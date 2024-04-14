@@ -1,4 +1,5 @@
 import { UserServices } from "../repositories/Repositories.js";
+import { AuthorizationError } from "../utils/CustomErrors.js";
 export const onlyAdminAccess = async (req, res, next) => {
   try {
     const permission = await UserServices.getRoleByID(req.session.userId);
@@ -6,9 +7,15 @@ export const onlyAdminAccess = async (req, res, next) => {
     if (permission.role === "ADMIN") {
       next();
     } else {
-      res.status(403).send("FORBIDDEN ACCESS");
+      throw new AuthorizationError();
     }
-  } catch (error) {}
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      res.status(error.statusCode).send(error.getErrorData());
+    } else {
+      res.status(500).send(error);
+    }
+  }
 };
 export const onlyUsersAccess = async (req, res, next) => {
   try {
@@ -16,7 +23,13 @@ export const onlyUsersAccess = async (req, res, next) => {
     if (permission.role === "USER") {
       next();
     } else {
-      res.status(403).send("FORBIDDEN ACCESS");
+      throw new AuthorizationError();
     }
-  } catch (error) {}
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      res.status(error.statusCode).send(error.getErrorData());
+    } else {
+      res.status(500).send(error);
+    }
+  }
 };
