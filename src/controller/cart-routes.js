@@ -152,6 +152,7 @@ router.put("/carts/:cid/products/:pid", onlyUsersAccess, async (req, res) => {
     }
   }
 });
+
 router.post("/carts/:cid/purchase", async (req, res) => {
   try {
     const { cid } = req.params;
@@ -189,3 +190,4 @@ router.post("/carts/:cid/purchase", async (req, res) => {
 });
 
 export default router;
+//create a Tickets class

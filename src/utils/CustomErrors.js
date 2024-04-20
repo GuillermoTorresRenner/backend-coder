@@ -1,3 +1,4 @@
+import Logger from "./Logger.js";
 //_______________________________________Generic errors_______________________________________________________________________
 
 export class InsufficientDataError extends Error {
@@ -9,6 +10,9 @@ export class InsufficientDataError extends Error {
     this.statusCode = 400;
     this.name = this.constructor.name;
     Error.captureStackTrace(this, this.constructor);
+    Logger.error(
+      `Error Type: ${this.name} - Status: ${this.statusCode} - Mesage${this.message}`
+    );
   }
   getErrorData() {
     console.log("Error:", {
