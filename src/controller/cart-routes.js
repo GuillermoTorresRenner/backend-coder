@@ -61,7 +61,6 @@ router.post("/carts/:cid/products/:pid", onlyUsersAccess, async (req, res) => {
       ]);
     const data = await CartServices.addToCart(cid, pid, quantity);
     res.status(201).send(data);
-    console.log(data);
   } catch (error) {
     if (error instanceof InsufficientDataError) {
       res.status(error.statusCode).send(error.getErrorData());

@@ -26,7 +26,6 @@ router.get("/register", async (req, res) => {
 });
 router.get("/profile", async (req, res) => {
   const { userId } = req.session;
-  console.log("id: ", req.session);
   const userData = await UsersDao.getUserByID(userId);
   res.render("profile", { userData });
 });
@@ -47,7 +46,6 @@ router.get("/product/:_id", auth, async (req, res) => {
 router.get("/cart/:_id", auth, async (req, res) => {
   const { _id } = req.params;
   const data = await CartDao.getCartByID(_id);
-  console.log(data);
   res.render("cart", { data });
 });
 

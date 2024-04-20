@@ -1,4 +1,5 @@
 import { promises as fs } from "fs";
+import Logger from "./Logger";
 class FileManager {
   constructor(path) {
     this.path = path;
@@ -8,7 +9,7 @@ class FileManager {
     try {
       await fs.writeFile(this.path, JSON.stringify(data));
     } catch (error) {
-      console.log("Ocurrió un error guardando datos en el archivo: ", error);
+      Logger.error("Ocurrió un error guardando datos en el archivo: ", error);
     }
   };
 
@@ -17,7 +18,7 @@ class FileManager {
       const savedData = await fs.readFile(this.path, "utf-8");
       return JSON.parse(savedData);
     } catch (error) {
-      console.log("Error obteniendo datos desde archivo:", error);
+      Logger.error("Error obteniendo datos desde archivo:", error);
     }
   };
 
@@ -27,7 +28,7 @@ class FileManager {
       const foundedData = savedData.find((p) => p.id === id);
       return foundedData ? foundedData : `No existe un item con id: ${id}`;
     } catch (error) {
-      console.log("Error obteniendo datos desde archivo:", error);
+      Logger.error("Error obteniendo datos desde archivo:", error);
     }
   };
 
@@ -36,7 +37,7 @@ class FileManager {
       const savedData = await this.getFromFile();
       return savedData.slice(0, limit);
     } catch (error) {
-      console.log("Error obteniendo datos desde archivo:", error);
+      Logger.error("Error obteniendo datos desde archivo:", error);
     }
   };
 
@@ -44,11 +45,10 @@ class FileManager {
     try {
       const savedData = await this.getFromFile();
       const newList = savedData.filter((p) => p.id !== id);
-      console.log(newList);
       this.products = newList;
       await this.saveInFile(this.products);
     } catch (error) {
-      console.log(
+      Logger.error(
         "Ocurrió un error eliminando un registro desde archivo",
         error
       );
@@ -64,7 +64,7 @@ class FileManager {
 
       await this.saveInFile(updatedList);
     } catch (error) {
-      console.error(
+      Logger.error(
         "Ocurrió un error actualizando un registro en el archivo:",
         error
       );

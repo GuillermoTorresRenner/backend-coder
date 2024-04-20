@@ -1,3 +1,5 @@
+import Logger from "../../../utils/Logger.js";
+
 const socket = io();
 const recivedMessages = document.getElementById("recivedMessages");
 alert("script");
@@ -13,12 +15,10 @@ function renderMessages(data) {
 }
 
 socket.on("messages", (data) => {
-  console.log("carga inicial: ", data);
   renderProducts(data);
 });
 
 socket.on("res", (data) => {
-  console.log("socket data", data);
   renderProducts(data);
   clearForm();
 });
@@ -42,11 +42,9 @@ function sendNewProduct() {
     body: JSON.stringify(formData),
   })
     .then((response) => response.json())
-    .then((data) => {
-      console.log("Respuesta del servidor:", data);
-    })
+    .then((data) => {})
     .catch((error) => {
-      console.error("Error al enviar datos:", error);
+      Logger.error("Error al enviar datos:", error);
     });
 }
 

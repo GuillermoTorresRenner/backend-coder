@@ -77,7 +77,6 @@ const initializaPassport = () => {
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
-          console.log(profile._json);
           const user = await UsersDao.getUserByEmail(profile._json.email || "");
           if (!user) {
             const newUser = {

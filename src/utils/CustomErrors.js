@@ -10,16 +10,13 @@ export class InsufficientDataError extends Error {
     this.statusCode = 400;
     this.name = this.constructor.name;
     Error.captureStackTrace(this, this.constructor);
-    Logger.error(
-      `Error Type: ${this.name} - Status: ${this.statusCode} - Mesage${this.message}`
-    );
   }
   getErrorData() {
-    console.log("Error:", {
-      name: this.name,
-      message: this.message,
-      statusCode: this.statusCode,
-    });
+    Logger.error(
+      `${new Date().toLocaleDateString()} - Error Type: ${
+        this.name
+      } - Status: ${this.statusCode} - Mesage${this.message}`
+    );
     return {
       status: this.statusCode,
       message: this.message,
@@ -38,11 +35,11 @@ export class UserNotFoundError extends Error {
     Error.captureStackTrace(this, this.constructor);
   }
   getErrorData() {
-    console.log("Error:", {
-      name: this.name,
-      message: this.message,
-      statusCode: this.statusCode,
-    });
+    Logger.warn(
+      `${new Date().toLocaleDateString()} - Error Type: ${
+        this.name
+      } - Status: ${this.statusCode} - Mesage${this.message}`
+    );
     return {
       status: this.statusCode,
       message: this.message,
@@ -61,11 +58,11 @@ export class ProductNotFoundError extends Error {
     Error.captureStackTrace(this, this.constructor);
   }
   getErrorData() {
-    console.log("Error:", {
-      name: this.name,
-      message: this.message,
-      statusCode: this.statusCode,
-    });
+    Logger.warn(
+      `${new Date().toLocaleDateString()} - Error Type: ${
+        this.name
+      } - Status: ${this.statusCode} - Mesage${this.message}`
+    );
     return {
       status: this.statusCode,
       message: this.message,
@@ -84,11 +81,11 @@ export class CartNotFoundError extends Error {
     Error.captureStackTrace(this, this.constructor);
   }
   getErrorData() {
-    console.log("Error:", {
-      name: this.name,
-      message: this.message,
-      statusCode: this.statusCode,
-    });
+    Logger.warn(
+      `${new Date().toLocaleDateString()} - Error Type: ${
+        this.name
+      } - Status: ${this.statusCode} - Mesage${this.message}`
+    );
     return {
       status: this.statusCode,
       message: this.message,
@@ -104,11 +101,11 @@ export class CartNotCreatedError extends Error {
     Error.captureStackTrace(this, this.constructor);
   }
   getErrorData() {
-    console.log("Error:", {
-      name: this.name,
-      message: this.message,
-      statusCode: this.statusCode,
-    });
+    Logger.error(
+      `${new Date().toLocaleDateString()} - Error Type: ${
+        this.name
+      } - Status: ${this.statusCode} - Mesage${this.message}`
+    );
     return {
       status: this.statusCode,
       message: this.message,
@@ -124,11 +121,11 @@ export class ProductCartNotDeletedError extends Error {
     Error.captureStackTrace(this, this.constructor);
   }
   getErrorData() {
-    console.log("Error:", {
-      name: this.name,
-      message: this.message,
-      statusCode: this.statusCode,
-    });
+    Logger.error(
+      `${new Date().toLocaleDateString()} - Error Type: ${
+        this.name
+      } - Status: ${this.statusCode} - Mesage${this.message}`
+    );
     return {
       status: this.statusCode,
       message: this.message,
@@ -144,11 +141,11 @@ export class CartNotUpdatedError extends Error {
     Error.captureStackTrace(this, this.constructor);
   }
   getErrorData() {
-    console.log("Error:", {
-      name: this.name,
-      message: this.message,
-      statusCode: this.statusCode,
-    });
+    Logger.error(
+      `${new Date().toLocaleDateString()} - Error Type: ${
+        this.name
+      } - Status: ${this.statusCode} - Mesage${this.message}`
+    );
     return {
       status: this.statusCode,
       message: this.message,
@@ -164,11 +161,11 @@ export class CartNotBuyError extends Error {
     Error.captureStackTrace(this, this.constructor);
   }
   getErrorData() {
-    console.log("Error:", {
-      name: this.name,
-      message: this.message,
-      statusCode: this.statusCode,
-    });
+    Logger.error(
+      `${new Date().toLocaleDateString()} - Error Type: ${
+        this.name
+      } - Status: ${this.statusCode} - Mesage${this.message}`
+    );
     return {
       status: this.statusCode,
       message: this.message,
@@ -184,11 +181,11 @@ export class TicketNotCreatedError extends Error {
     Error.captureStackTrace(this, this.constructor);
   }
   getErrorData() {
-    console.log("Error:", {
-      name: this.name,
-      message: this.message,
-      statusCode: this.statusCode,
-    });
+    Logger.error(
+      `${new Date().toLocaleDateString()} - Error Type: ${
+        this.name
+      } - Status: ${this.statusCode} - Mesage${this.message}`
+    );
     return {
       status: this.statusCode,
       message: this.message,
@@ -207,11 +204,11 @@ export class AuthenticationError extends Error {
     Error.captureStackTrace(this, this.constructor);
   }
   getErrorData() {
-    console.log("Error:", {
-      name: this.name,
-      message: this.message,
-      statusCode: this.statusCode,
-    });
+    Logger.error(
+      `${new Date().toLocaleDateString()} - Error Type: ${
+        this.name
+      } - Status: ${this.statusCode} - Mesage${this.message}`
+    );
     return {
       status: this.statusCode,
       message: this.message,
@@ -230,11 +227,11 @@ export class AuthorizationError extends Error {
     Error.captureStackTrace(this, this.constructor);
   }
   getErrorData() {
-    console.log("Error:", {
-      name: this.name,
-      message: this.message,
-      statusCode: this.statusCode,
-    });
+    Logger.error(
+      `${new Date().toLocaleDateString()} - Error Type: ${
+        this.name
+      } - Status: ${this.statusCode} - Mesage${this.message}`
+    );
     return {
       status: this.statusCode,
       message: this.message,

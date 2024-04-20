@@ -37,6 +37,7 @@ const ProductionLogger = winston.createLogger({
     new winston.transports.File({
       filename: "./logs/errors.log",
       level: "error",
+      format: winston.format.simple(),
     }),
   ],
 });

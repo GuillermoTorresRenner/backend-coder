@@ -24,16 +24,10 @@ router.get("/loggerTest/:errorType", async (req, res) => {
       case "debug":
         Logger.debug("debug");
         break;
-
-      default:
-        break;
     }
+    res.send(`ERROR TYPE: ${errorType} RECIVED`);
   } catch (error) {
-    if (error instanceof InsufficientDataError) {
-      res.status(error.getErrorData).send(error.getErrorData());
-    } else {
-      res.status(500).send(error.message);
-    }
+    Logger.error(error);
   }
 });
 

@@ -1,13 +1,15 @@
+import Logger from "../../src/utils/Logger.js";
+
 const socket = io();
 const recivedMessages = document.getElementById("recivedMessages");
 
 socket.on("messages", (data) => {
-  console.log("carga inicial: ", data);
+  Logger.info("carga inicial: ", data);
   renderMessages(data);
 });
 
 socket.on("res", (data) => {
-  console.log("socket data", data);
+  Logger.info("socket data", data);
   renderMessages(data);
 });
 
@@ -39,10 +41,10 @@ function sendNewMessage() {
   })
     .then((response) => response.json())
     .then((data) => {
-      console.log("Respuesta del servidor:", data);
+      Logger.info("Respuesta del servidor:", data);
     })
     .catch((error) => {
-      console.error("Error al enviar datos:", error);
+      Logger.error("Error al enviar datos:", error);
     });
 }
 

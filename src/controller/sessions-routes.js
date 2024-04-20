@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { UserServices } from "../repositories/Repositories.js";
 import passport from "passport";
+import Logger from "../utils/Logger.js";
 const router = Router();
 
 router.post(
@@ -20,7 +21,7 @@ router.post("/sessions/restore", async (req, res) => {
     await UserServices.restorePasswordWithEmail(email, password);
     res.redirect("/login");
   } catch (error) {
-    console.error("Error:", error);
+    Logger.error("Error:", error);
     res.status(500).send("Error interno del servidor");
   }
 });
@@ -34,7 +35,6 @@ router.post(
   passport.authenticate("login", { failureRedirect: "/" }),
   async (req, res) => {
     try {
-      console.log("user", req.user);
       if (!req.user) {
         res
           .status(500)
@@ -44,7 +44,7 @@ router.post(
         res.redirect("/products");
       }
     } catch (error) {
-      console.error("Error:", error);
+      Logger.error("Error:", error);
       res.status(500).send({ status: "error", message: "Invalid credentials" });
     }
   }
@@ -61,7 +61,7 @@ router.get("/sessions/current", async (req, res) => {
     }
   } catch (error) {
     // Manejo de errores
-    console.error("Error:", error);
+    Logger.error("Error:", error);
     res.status(500).send({ status: "error", message: "Internal server error" });
   }
 });

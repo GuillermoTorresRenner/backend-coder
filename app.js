@@ -10,7 +10,7 @@ import products from "./src/controller/products-routes.js";
 import cart from "./src/controller/cart-routes.js";
 import messages from "./src/controller/messages-routes.js";
 import routerSessions from "./src/controller/sessions-routes.js";
-import Logger from "./src/controller/logger.routes.js";
+import loggerRouter from "./src/controller/logger.routes.js";
 import views from "./src/routes/views-routes.js";
 import { Server } from "socket.io";
 import ProductsDao from "./src/dao/productDao.js";
@@ -20,11 +20,12 @@ import session from "express-session";
 import MongoStore from "connect-mongo";
 import passport from "passport";
 import initializaPassport from "./src/utils/passport.config.js";
+import Logger from "./src/utils/Logger.js";
 
 //Servidor Http
 const app = express();
 const httpServer = app.listen(process.env.PORT || 3000, () => {
-  console.log(`Server running at port ${process.env.PORT}`);
+  Logger.info(`Server running at port ${process.env.PORT}`);
 });
 let productos;
 let mensajes;
@@ -50,10 +51,10 @@ mongoose.set("strictQuery", false);
 
 mongoose.connect(uri).then(
   () => {
-    console.log("Conectado a DB");
+    Logger.info("Conectado a DB");
   },
   (err) => {
-    console.log(err);
+    Logger.fatal(err);
   }
 );
 //Exportación de socket.io para poder usarlo en los endpoints:
@@ -82,7 +83,7 @@ app.use("/api", products);
 app.use("/api", cart);
 app.use("/api", messages);
 app.use("/api", routerSessions);
-app.use("/api", Logger);
+app.use("/api", loggerRouter);
 app.use("/", views);
 
 // Configuración de templates de vistas

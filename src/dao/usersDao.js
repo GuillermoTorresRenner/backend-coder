@@ -19,7 +19,6 @@ export default class UsersDao {
   static async restorePasswordWithEmail(email, password) {
     const user = await usersModel.findOne({ email }).lean();
     user.password = PasswordManagement.hashPassword(password);
-    console.log(user);
     return usersModel.findByIdAndUpdate(user._id, user, {
       new: true,
     });
