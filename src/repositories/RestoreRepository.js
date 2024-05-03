@@ -8,4 +8,7 @@ export default class RestoreRepository {
   static async getRestoreByHash(hash) {
     return RestoreDao.getRestoreByHash(hash);
   }
+  static async deleteRestoreByHash(hash) {
+    return RestoreDao.deleteRestoreByHash(hash);
+  }
 }

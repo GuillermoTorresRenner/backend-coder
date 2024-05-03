@@ -1,4 +1,3 @@
-import e from "express";
 import UsersDao from "../dao/usersDao.js";
 import UserDTO from "../dto/users.dto.js";
 
@@ -22,5 +21,11 @@ export default class UsersRepository {
   }
   static async getusersIdByEmail(email) {
     return UsersDao.getusersIdByEmail(email);
+  }
+  static async validateNewPassword(_id, password) {
+    return await UsersDao.validateNewPassword(_id, password);
+  }
+  static async restorePasswordWithID(_id, password) {
+    return await UsersDao.restorePasswordWithID(_id, password);
   }
 }

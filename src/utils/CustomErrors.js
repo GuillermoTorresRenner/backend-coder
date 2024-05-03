@@ -35,7 +35,49 @@ export class UserNotFoundError extends Error {
     Error.captureStackTrace(this, this.constructor);
   }
   getErrorData() {
-    Logger.warn(
+    Logger.warning(
+      `${new Date().toLocaleDateString()} - Error Type: ${
+        this.name
+      } - Status: ${this.statusCode} - Mesage${this.message}`
+    );
+    return {
+      status: this.statusCode,
+      message: this.message,
+    };
+  }
+}
+//_______________________________________Restore password Errors_______________________________________________________________________
+
+export class InvalidLinkError extends Error {
+  constructor() {
+    super();
+    this.message = "Invalid link";
+    this.statusCode = 404;
+    this.name = this.constructor.name;
+    Error.captureStackTrace(this, this.constructor);
+  }
+  getErrorData() {
+    Logger.warning(
+      `${new Date().toLocaleDateString()} - Error Type: ${
+        this.name
+      } - Status: ${this.statusCode} - Mesage${this.message}`
+    );
+    return {
+      status: this.statusCode,
+      message: this.message,
+    };
+  }
+}
+export class AlreadyPasswordInUseError extends Error {
+  constructor() {
+    super();
+    this.message = "Password is already in use, please choose another one";
+    this.statusCode = 404;
+    this.name = this.constructor.name;
+    Error.captureStackTrace(this, this.constructor);
+  }
+  getErrorData() {
+    Logger.warning(
       `${new Date().toLocaleDateString()} - Error Type: ${
         this.name
       } - Status: ${this.statusCode} - Mesage${this.message}`
@@ -58,7 +100,7 @@ export class ProductNotFoundError extends Error {
     Error.captureStackTrace(this, this.constructor);
   }
   getErrorData() {
-    Logger.warn(
+    Logger.warning(
       `${new Date().toLocaleDateString()} - Error Type: ${
         this.name
       } - Status: ${this.statusCode} - Mesage${this.message}`
@@ -81,7 +123,7 @@ export class CartNotFoundError extends Error {
     Error.captureStackTrace(this, this.constructor);
   }
   getErrorData() {
-    Logger.warn(
+    Logger.warning(
       `${new Date().toLocaleDateString()} - Error Type: ${
         this.name
       } - Status: ${this.statusCode} - Mesage${this.message}`

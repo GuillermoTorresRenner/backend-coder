@@ -1,7 +1,7 @@
 import restoreModel from "../model/restore.model.js";
 import { v4 as uuidv4 } from "uuid";
 
-export default class UsersDao {
+export default class RestoreDao {
   static async createNewRestore(userId) {
     return restoreModel.findOneAndUpdate(
       { user: userId },
@@ -12,5 +12,8 @@ export default class UsersDao {
 
   static async getRestoreByHash(hash) {
     return restoreModel.findOne({ hash }).lean();
+  }
+  static async deleteRestoreByHash(hash) {
+    return restoreModel.deleteOne({ hash });
   }
 }

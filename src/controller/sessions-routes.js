@@ -3,7 +3,11 @@ import { UserServices } from "../repositories/Repositories.js";
 import passport from "passport";
 import Logger from "../utils/Logger.js";
 import NodeMailer from "../utils/NodeMailer.js";
-import { UserNotFoundError } from "../utils/CustomErrors.js";
+import {
+  AlreadyPasswordInUseError,
+  InvalidLinkError,
+  UserNotFoundError,
+} from "../utils/CustomErrors.js";
 import RestoreRepository from "../repositories/RestoreRepository.js";
 const router = Router();
 
@@ -30,12 +34,14 @@ router.post("/sessions/restore", async (req, res) => {
       from: "Infuzion",
       to: email,
       subject: "password reset",
-      html: `<h1>Click <a href="${link}" target="_blanc">here</a> to reset your password</h1>`,
+      html: `<h1>Click <a href="${link}" target="_blanc">HERE</a> to reset your INFUZION's password</h1>`,
     });
     res.redirect("/link-sended");
   } catch (error) {
-    if (error instanceof UserNotFoundError()) {
+    if (error instanceof UserNotFoundError) {
       res.status(error.statusCode).send(error.getErrorData());
+    } else {
+      res.status(500).send("Internal server error");
     }
   }
 
@@ -49,24 +55,53 @@ router.post("/sessions/restore", async (req, res) => {
 });
 
 router.get("/sessions/reset/:hash", async (req, res) => {
-  const { hash } = req.params;
-  const restore = await RestoreRepository.getRestoreByHash(hash);
-  if (!restore) {
-    res.status(404).send("Invalid link");
-  } else {
-    const now = Date.now();
-    const diff = now - restore.createdAt;
-    console.log(diff, "diff");
-    if (diff > 1000 * 60 * 60) {
-      res.send("Link expired");
+  try {
+    const { hash } = req.params;
+    const restore = await RestoreRepository.getRestoreByHash(hash);
+    if (!restore) {
+      res.status(404).send("Invalid link");
     } else {
-      // res.send(
-      //   `hora link exp ${restore.createdAt} - hora actual ${now} - diff ${diff}`
-      // );
-      /**
-       * definir un endpoint para recibir el nuevo password
-       * definir una view para el formulario de reseteo
-       */
+      const now = Date.now();
+      const diff = now - restore.createdAt;
+      if (diff > 1000 * 60 * 60) {
+        res.send("Link expired, please generate a new one");
+      } else {
+        res.redirect(`/restore-password/${hash}`);
+      }
+    }
+  } catch (error) {
+    res.status(500).send("Internal server error");
+  }
+});
+
+router.post("/sessions/new-password/:hash", async (req, res) => {
+  try {
+    const { hash } = req.params;
+    const { password } = req.body;
+
+    const restore = await RestoreRepository.getRestoreByHash(hash);
+    if (!restore) {
+      throw InvalidLinkError();
+    } else {
+      const validateNewPassword = await UserServices.validateNewPassword(
+        restore.user,
+        password
+      );
+      if (!validateNewPassword) {
+        throw new AlreadyPasswordInUseError();
+      }
+      await UserServices.restorePasswordWithID(restore.user, password);
+      await RestoreRepository.deleteRestoreByHash(hash);
+      res.redirect("/password-success");
+    }
+  } catch (error) {
+    if (
+      error instanceof InvalidLinkError ||
+      error instanceof AlreadyPasswordInUseError
+    ) {
+      res.status(error.statusCode).send(error.getErrorData());
+    } else {
+      res.status(500).send("Internal server error");
     }
   }
 });

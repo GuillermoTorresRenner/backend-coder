@@ -23,6 +23,23 @@ export default class UsersDao {
       new: true,
     });
   }
+  static async restorePasswordWithID(_id, password) {
+    const user = await usersModel.findOne({ _id }).lean();
+    user.password = PasswordManagement.hashPassword(password);
+    return usersModel.findByIdAndUpdate(user._id, user, {
+      new: true,
+    });
+  }
+  static async validateNewPassword(_id, password) {
+    const user = await usersModel.findOne({ _id }).lean();
+
+    const result = !PasswordManagement.validatePassword(
+      password,
+      user.password
+    );
+
+    return result;
+  }
   static async getusersIdByEmail(email) {
     return usersModel.findOne({ email }, { _id: 1 }).lean();
   }

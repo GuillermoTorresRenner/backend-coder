@@ -65,9 +65,18 @@ router.get("/chat", auth, (req, res) => {
 router.get("/restore", (req, res) => {
   res.render("restore");
 });
+//rgenerar correo de recuperación
+router.get("/restore-password/:hash", (req, res) => {
+  const { hash } = req.params;
+  res.render("restorePassword", { hash });
+});
 //confimar correo de recuperación enviado
 router.get("/link-sended", (req, res) => {
   res.render("linkSended");
+});
+//confimar PAssword cambiado
+router.get("/password-success", (req, res) => {
+  res.render("passwordChanges");
 });
 
 export default router;
