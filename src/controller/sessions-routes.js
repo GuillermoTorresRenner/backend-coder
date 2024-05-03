@@ -2,6 +2,9 @@ import { Router } from "express";
 import { UserServices } from "../repositories/Repositories.js";
 import passport from "passport";
 import Logger from "../utils/Logger.js";
+import NodeMailer from "../utils/NodeMailer.js";
+import { UserNotFoundError } from "../utils/CustomErrors.js";
+import RestoreRepository from "../repositories/RestoreRepository.js";
 const router = Router();
 
 router.post(
@@ -17,14 +20,57 @@ router.post(
 );
 router.post("/sessions/restore", async (req, res) => {
   try {
-    const { email, password } = req.body;
-    await UserServices.restorePasswordWithEmail(email, password);
-    res.redirect("/login");
+    const { email } = req.body;
+    const userId = await UserServices.getusersIdByEmail(email);
+    if (!userId) throw UserNotFoundError();
+    const restore = await RestoreRepository.createNewRestore(userId);
+    const link = `http://${req.headers.host}/api/sessions/reset/${restore.hash}`;
+
+    NodeMailer.sendMail({
+      from: "Infuzion",
+      to: email,
+      subject: "password reset",
+      html: `<h1>Click <a href="${link}" target="_blanc">here</a> to reset your password</h1>`,
+    });
+    res.redirect("/link-sended");
   } catch (error) {
-    Logger.error("Error:", error);
-    res.status(500).send("Error interno del servidor");
+    if (error instanceof UserNotFoundError()) {
+      res.status(error.statusCode).send(error.getErrorData());
+    }
+  }
+
+  //   const { email, password } = req.body;
+  //   await UserServices.restorePasswordWithEmail(email, password);
+  //   res.redirect("/login");
+  // } catch (error) {
+  //   Logger.error("Error:", error);
+  //   res.status(500).send("Error interno del servidor");
+  // }
+});
+
+router.get("/sessions/reset/:hash", async (req, res) => {
+  const { hash } = req.params;
+  const restore = await RestoreRepository.getRestoreByHash(hash);
+  if (!restore) {
+    res.status(404).send("Invalid link");
+  } else {
+    const now = Date.now();
+    const diff = now - restore.createdAt;
+    console.log(diff, "diff");
+    if (diff > 1000 * 60 * 60) {
+      res.send("Link expired");
+    } else {
+      // res.send(
+      //   `hora link exp ${restore.createdAt} - hora actual ${now} - diff ${diff}`
+      // );
+      /**
+       * definir un endpoint para recibir el nuevo password
+       * definir una view para el formulario de reseteo
+       */
+    }
   }
 });
+
 router.get("/sessions/logout", (req, res) => {
   req.session.destroy((err) => {
     res.redirect("/");

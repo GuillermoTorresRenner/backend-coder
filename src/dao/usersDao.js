@@ -23,4 +23,7 @@ export default class UsersDao {
       new: true,
     });
   }
+  static async getusersIdByEmail(email) {
+    return usersModel.findOne({ email }, { _id: 1 }).lean();
+  }
 }

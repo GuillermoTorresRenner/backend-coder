@@ -20,4 +20,7 @@ export default class UsersRepository {
   static async getRoleByID(_id) {
     return UsersDao.getRoleByID(_id);
   }
+  static async getusersIdByEmail(email) {
+    return UsersDao.getusersIdByEmail(email);
+  }
 }

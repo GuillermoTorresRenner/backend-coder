@@ -61,9 +61,13 @@ router.get("/admin", auth, (req, res) => {
 router.get("/chat", auth, (req, res) => {
   res.render("chat");
 });
-//restaurar oassword
+//rgenerar correo de recuperación
 router.get("/restore", (req, res) => {
   res.render("restore");
+});
+//confimar correo de recuperación enviado
+router.get("/link-sended", (req, res) => {
+  res.render("linkSended");
 });
 
 export default router;
