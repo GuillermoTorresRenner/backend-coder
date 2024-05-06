@@ -9,6 +9,7 @@ const productSchema = mongoose.Schema({
   stock: { type: Number, required: true },
   category: { type: String, required: true },
   thumbnails: [{ type: String }],
+  owner: { type: String, default: "ADMIN" },
 });
 productSchema.plugin(mongoosePaginate);
 const productsModel = mongoose.model("products", productSchema);

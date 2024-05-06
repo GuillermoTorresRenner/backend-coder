@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+const roles = ["USER", "ADMIN", "PREMIUM"];
 const usersSchema = mongoose.Schema({
   first_name: { type: String, required: true },
   last_name: { type: String, required: true },
@@ -7,6 +8,7 @@ const usersSchema = mongoose.Schema({
   password: { type: String, required: true },
   role: {
     type: String,
+    enum: roles,
     default: "USER",
   },
 });

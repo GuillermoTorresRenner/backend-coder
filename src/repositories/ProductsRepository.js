@@ -25,4 +25,8 @@ export default class ProductsRepository {
   static async consumeStock(_id, newQuantity) {
     return await ProductsDao.consumeStock(_id, newQuantity);
   }
+
+  static async getProductOwnerById(_id) {
+    return await ProductsDao.getProductOwnerById(_id);
+  }
 }

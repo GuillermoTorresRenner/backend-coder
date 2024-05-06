@@ -2,8 +2,15 @@ import UsersDao from "../dao/usersDao.js";
 import UserDTO from "../dto/users.dto.js";
 
 export default class UsersRepository {
-  static async register(first_name, last_name, email, age, password) {
-    return await UsersDao.register(first_name, last_name, email, age, password);
+  static async register(first_name, last_name, email, age, password, role) {
+    return await UsersDao.register(
+      first_name,
+      last_name,
+      email,
+      age,
+      password,
+      role
+    );
   }
   static async getUserByEmail(email) {
     const user = await UsersDao.getUserByEmail(email);
@@ -27,5 +34,11 @@ export default class UsersRepository {
   }
   static async restorePasswordWithID(_id, password) {
     return await UsersDao.restorePasswordWithID(_id, password);
+  }
+  static async getusersEmailById(_id) {
+    return UsersDao.getusersEmailById(_id);
+  }
+  static async changeRole(_id) {
+    return UsersDao.changeRole(_id);
   }
 }

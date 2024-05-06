@@ -64,7 +64,7 @@ router.get("/sessions/reset/:hash", async (req, res) => {
       const now = Date.now();
       const diff = now - restore.createdAt;
       if (diff > 1000 * 60 * 60) {
-        res.send("Link expired, please generate a new one");
+        res.redirect("/restore");
       } else {
         res.redirect(`/restore-password/${hash}`);
       }

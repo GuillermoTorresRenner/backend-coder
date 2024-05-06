@@ -11,6 +11,7 @@ import cart from "./src/controller/cart-routes.js";
 import messages from "./src/controller/messages-routes.js";
 import routerSessions from "./src/controller/sessions-routes.js";
 import loggerRouter from "./src/controller/logger.routes.js";
+import users from "./src/controller/users-routes.js";
 import views from "./src/routes/views-routes.js";
 import { Server } from "socket.io";
 import ProductsDao from "./src/dao/productDao.js";
@@ -84,6 +85,7 @@ app.use("/api", cart);
 app.use("/api", messages);
 app.use("/api", routerSessions);
 app.use("/api", loggerRouter);
+app.use("/api", users);
 app.use("/", views);
 
 // Configuración de templates de vistas

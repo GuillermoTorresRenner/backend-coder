@@ -3,8 +3,12 @@ import {
   CartServices,
   TicketsServices,
   UserServices,
+  ProductsServices,
 } from "../repositories/Repositories.js";
-import { onlyUsersAccess } from "../middlewares/permissions.js";
+import {
+  onlyAdminOrPremiumAccess,
+  onlyUsersAccess,
+} from "../middlewares/permissions.js";
 import {
   CartNotBuyError,
   CartNotCreatedError,
@@ -14,6 +18,7 @@ import {
   ProductCartNotDeletedError,
   TicketNotCreatedError,
   UserNotFoundError,
+  AuthorizationError,
 } from "../utils/CustomErrors.js";
 const router = Router();
 
@@ -49,26 +54,39 @@ router.post("/carts", async (req, res) => {
     }
   }
 });
-router.post("/carts/:cid/products/:pid", onlyUsersAccess, async (req, res) => {
-  try {
-    const { quantity } = req.body;
-    const { cid, pid } = req.params;
-    if (!quantity || !cid || !pid)
-      throw new InsufficientDataError("product", [
-        "quantity",
-        "cartID",
-        "ProductID",
-      ]);
-    const data = await CartServices.addToCart(cid, pid, quantity);
-    res.status(201).send(data);
-  } catch (error) {
-    if (error instanceof InsufficientDataError) {
-      res.status(error.statusCode).send(error.getErrorData());
-    } else {
-      res.status(500).send(error.message);
+router.post(
+  "/carts/:cid/products/:pid",
+  onlyAdminOrPremiumAccess,
+  async (req, res) => {
+    try {
+      const { quantity } = req.body;
+      const { cid, pid } = req.params;
+      if (!quantity || !cid || !pid)
+        throw new InsufficientDataError("product", [
+          "quantity",
+          "cartID",
+          "ProductID",
+        ]);
+      const productOwner = await ProductsServices.getProductOwnerById(pid);
+      console.log(productOwner.owner, req.usersEmail, req.usersRole);
+      if (
+        req.usersRole === "PREMIUM" &&
+        req.usersEmail === productOwner.owner
+      ) {
+        throw new AuthorizationError();
+      } else {
+        const data = await CartServices.addToCart(cid, pid, quantity);
+        res.status(201).send(data);
+      }
+    } catch (error) {
+      if (error instanceof InsufficientDataError) {
+        res.status(error.statusCode).send(error.getErrorData());
+      } else {
+        res.status(500).send(error.message);
+      }
     }
   }
-});
+);
 
 router.delete("/carts/:cid/products/:pid", async (req, res) => {
   try {

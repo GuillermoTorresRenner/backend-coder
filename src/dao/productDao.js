@@ -58,4 +58,7 @@ export default class ProductsDao {
       { new: true }
     );
   }
+  static async getProductOwnerById(_id) {
+    return await productsModel.findOne({ _id }, { owner: 1 });
+  }
 }

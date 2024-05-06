@@ -7,10 +7,14 @@ import multer from "multer";
 import io from "../../app.js";
 import { v4 as uuidv4 } from "uuid";
 import path from "path";
-import { onlyAdminAccess } from "../middlewares/permissions.js";
+import {
+  onlyAdminAccess,
+  onlyAdminOrPremiumAccess,
+} from "../middlewares/permissions.js";
 import {
   InsufficientDataError,
   ProductNotFoundError,
+  AuthorizationError,
 } from "../utils/CustomErrors.js";
 
 const router = Router();
@@ -84,11 +88,14 @@ router.get("/products/:pid", async (req, res) => {
 router.post(
   "/products",
   upload.single("img"),
-  onlyAdminAccess,
+  onlyAdminOrPremiumAccess,
   async (req, res) => {
     try {
       const { body } = req;
       const { title, description, price, code, stock, category } = body;
+      const userRole = req.usersRole;
+      const userMail = req.usersEmail;
+
       const file = req.file.filename;
       if (
         !title ||
@@ -110,6 +117,8 @@ router.post(
         ]);
 
       body.thumbnails = "images/products/" + file.trim();
+      userRole === "PREMIUM" ? (body.owner = userMail) : (body.owner = "ADMIN");
+
       await ProductsServices.createNewProduct(body);
 
       const newProductsList = await ProductsServices.getAllProducts();
@@ -128,10 +137,11 @@ router.post(
   }
 );
 
-router.put("/products/:pid", onlyAdminAccess, async (req, res) => {
+router.put("/products/:pid", onlyAdminOrPremiumAccess, async (req, res) => {
   try {
     const { body } = req;
     const { pid } = req.params;
+    const productOwner = await ProductsServices.getProductOwnerById(pid);
     /////////////
     const { title, description, price, code, stock, category } = body;
     if (
@@ -152,25 +162,38 @@ router.put("/products/:pid", onlyAdminAccess, async (req, res) => {
         "stock",
         "category",
       ]);
-
+    if (req.usersRole === "PREMIUM" && req.usersEmail !== productOwner.owner) {
+      throw new AuthorizationError();
+    }
     await ProductsServices.updateProduct(pid, body);
     res.status(200).send(body);
   } catch (error) {
-    if (error instanceof InsufficientDataError) {
+    if (
+      error instanceof InsufficientDataError ||
+      error instanceof AuthorizationError
+    ) {
       res.status(error.statusCode).send(error.getErrorData());
     } else {
       res.status(500).send("Internal server error");
     }
   }
 });
-router.delete("/products/:pid", onlyAdminAccess, async (req, res) => {
+router.delete("/products/:pid", onlyAdminOrPremiumAccess, async (req, res) => {
   try {
     const { pid } = req.params;
+    const productOwner = await ProductsServices.getProductOwnerById(pid);
+
     if (!pid) throw new InsufficientDataError("product", ["ProductID"]);
+    if (req.usersRole === "PREMIUM" && req.usersEmail !== productOwner.owner) {
+      throw new AuthorizationError();
+    }
     await ProductsServices.deleteProduct(pid);
     res.status(200).send("Articulo eliminado");
   } catch (error) {
-    if (error instanceof InsufficientDataError) {
+    if (
+      error instanceof InsufficientDataError ||
+      error instanceof AuthorizationError
+    ) {
       res.status(error.statusCode).send(error.getErrorData());
     } else {
       res.status(500).send("Internal server error");

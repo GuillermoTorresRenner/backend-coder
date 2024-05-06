@@ -15,7 +15,7 @@ const initializaPassport = () => {
       },
       async (req, email, password, done) => {
         try {
-          let { first_name, last_name, age } = req.body;
+          let { first_name, last_name, age, role } = req.body;
           age = parseInt(age);
           if (!first_name || !last_name || !email || !password || !age) {
             return done(null, false);
@@ -31,7 +31,8 @@ const initializaPassport = () => {
             last_name,
             email,
             age,
-            password
+            password,
+            role
           );
           return done(null, user);
         } catch (error) {

@@ -1,9 +1,16 @@
 import usersModel from "../model/users.model.js";
 import PasswordManagement from "../utils/passwordManagement.js";
 export default class UsersDao {
-  static async register(first_name, last_name, email, age, password) {
+  static async register(first_name, last_name, email, age, password, role) {
     password = PasswordManagement.hashPassword(password);
-    return usersModel.create({ first_name, last_name, email, age, password });
+    return usersModel.create({
+      first_name,
+      last_name,
+      email,
+      age,
+      password,
+      role,
+    });
   }
   static async getUserByEmail(email) {
     return usersModel.findOne({ email }).lean();
@@ -42,5 +49,25 @@ export default class UsersDao {
   }
   static async getusersIdByEmail(email) {
     return usersModel.findOne({ email }, { _id: 1 }).lean();
+  }
+  static async getusersEmailById(_id) {
+    return usersModel.findOne({ _id }, { email: 1 }).lean();
+  }
+  static async changeRole(_id) {
+    const usersRole = await this.getRoleByID(_id);
+    let role;
+    if (usersRole.role === "PREMIUM") role = "USER";
+    if (usersRole.role === "USER") role = "PREMIUM";
+    if (usersRole.role === "ADMIN") role = "ADMIN";
+    console.log(usersRole.role);
+    console.log("nuevo rol: ", role);
+
+    return usersModel.findByIdAndUpdate(
+      { _id },
+      { $set: { role } },
+      {
+        new: true,
+      }
+    );
   }
 }
