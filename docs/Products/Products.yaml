@@ -1,0 +1,141 @@
+paths:
+  /products:
+    get:
+      tags:
+        - Products
+      summary: "Obtener todos los productos"
+      parameters:
+        - in: query
+          name: query
+          type: string
+        - in: query
+          name: limit
+          type: integer
+        - in: query
+          name: page
+          type: integer
+        - in: query
+          name: sort
+          type: string
+      responses:
+        "200":
+          description: "Productos obtenidos exitosamente"
+        "400":
+          description: "Datos insuficientes"
+        "404":
+          description: "Productos no encontrados"
+        "500":
+          description: "Error interno del servidor"
+    post:
+      tags:
+        - Products
+      summary: "Crear un nuevo producto"
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              description:
+                type: string
+              price:
+                type: number
+              code:
+                type: string
+              stock:
+                type: integer
+              category:
+                type: string
+              img:
+                type: string
+      responses:
+        "201":
+          description: "Producto creado exitosamente"
+        "400":
+          description: "Datos insuficientes"
+        "500":
+          description: "Error interno del servidor"
+  /products/{pid}:
+    get:
+      tags:
+        - Products
+      summary: "Obtener un producto por ID"
+      parameters:
+        - in: path
+          name: pid
+          required: true
+          type: string
+      responses:
+        "200":
+          description: "Producto obtenido exitosamente"
+        "400":
+          description: "Datos insuficientes"
+        "404":
+          description: "Producto no encontrado"
+        "500":
+          description: "Error interno del servidor"
+    put:
+      tags:
+        - Products
+      summary: "Actualizar un producto por ID"
+      parameters:
+        - in: path
+          name: pid
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              description:
+                type: string
+              price:
+                type: number
+              code:
+                type: string
+              stock:
+                type: integer
+              category:
+                type: string
+      responses:
+        "200":
+          description: "Producto actualizado exitosamente"
+        "400":
+          description: "Datos insuficientes"
+        "500":
+          description: "Error interno del servidor"
+    delete:
+      tags:
+        - Products
+      summary: "Eliminar un producto por ID"
+      parameters:
+        - in: path
+          name: pid
+          required: true
+          type: string
+      responses:
+        "200":
+          description: "Producto eliminado exitosamente"
+        "400":
+          description: "Datos insuficientes"
+        "500":
+          description: "Error interno del servidor"
+  /mockingproducts:
+    get:
+      tags:
+        - Products
+      summary: "Obtener productos falsos"
+      responses:
+        "200":
+          description: "Productos falsos obtenidos exitosamente"
+        "404":
+          description: "Productos no encontrados"
+        "500":
+          description: "Error interno del servidor"

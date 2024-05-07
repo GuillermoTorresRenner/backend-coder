@@ -22,6 +22,8 @@ import MongoStore from "connect-mongo";
 import passport from "passport";
 import initializaPassport from "./src/utils/passport.config.js";
 import Logger from "./src/utils/Logger.js";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUI from "swagger-ui-express";
 
 //Servidor Http
 const app = express();
@@ -60,6 +62,26 @@ mongoose.connect(uri).then(
 );
 //Exportación de socket.io para poder usarlo en los endpoints:
 export default socketServer;
+
+//Swagger
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Ecommerce Coder Api",
+      version: "1.0.0",
+      description: "API para el manejo de un sistema de ecommerce",
+    },
+    servers: [
+      {
+        url: "http://localhost:3000/api",
+      },
+    ],
+  },
+  apis: [`${__dirname}/docs/**/*.yaml`],
+};
+console.log(__dirname);
+const swaggerDocs = swaggerJSDoc(swaggerOptions);
 // Middleware
 app.use(cookieParser());
 app.use(
@@ -80,6 +102,7 @@ app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("/apidocs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 app.use("/api", products);
 app.use("/api", cart);
 app.use("/api", messages);
