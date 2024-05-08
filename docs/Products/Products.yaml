@@ -20,6 +20,12 @@ paths:
       responses:
         "200":
           description: "Productos obtenidos exitosamente"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
         "400":
           description: "Datos insuficientes"
         "404":
@@ -71,6 +77,10 @@ paths:
       responses:
         "200":
           description: "Producto obtenido exitosamente"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
         "400":
           description: "Datos insuficientes"
         "404":
@@ -139,3 +149,42 @@ paths:
           description: "Productos no encontrados"
         "500":
           description: "Error interno del servidor"
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: "ID autogenerado"
+        title:
+          type: String
+          description: "El título del producto"
+        description:
+          type: Ntring
+          description: "La descripción detallada del producto"
+        price:
+          type: Number
+          description: "El precio del producto"
+        code:
+          type: String
+          description: "El código único del producto"
+        stock:
+          type: Number
+          description: "La cantidad de stock disponible para el producto"
+        category:
+          type: Number
+          description: "La categoría a la que pertenece el producto"
+        img:
+          type: Number
+          description: "La URL de la imagen del producto"
+
+      example:
+        title: "Nuevo producto"
+        description: "Descripción del nuevo producto"
+        price: 9.99
+        code: "ABC123"
+        stock: 10
+        category: "Electronics"
+        img: "https://example.com/product-image.jpg"

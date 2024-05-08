@@ -8,10 +8,15 @@ paths:
         - in: path
           name: cid
           required: true
-          type: string
+          schema:
+            type: string
       responses:
         "200":
           description: "Carrito obtenido exitosamente"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
         "400":
           description: "Datos insuficientes"
         "404":
@@ -35,7 +40,8 @@ paths:
         - in: path
           name: cid
           required: true
-          type: string
+          schema:
+            type: string
       responses:
         "200":
           description: "Carrito eliminado exitosamente"
@@ -51,7 +57,8 @@ paths:
         - in: path
           name: cid
           required: true
-          type: string
+          schema:
+            type: string
         - in: body
           name: body
           required: true
@@ -78,11 +85,13 @@ paths:
         - in: path
           name: cid
           required: true
-          type: string
+          schema:
+            type: string
         - in: path
           name: pid
           required: true
-          type: string
+          schema:
+            type: string
         - in: body
           name: body
           required: true
@@ -106,11 +115,13 @@ paths:
         - in: path
           name: cid
           required: true
-          type: string
+          schema:
+            type: string
         - in: path
           name: pid
           required: true
-          type: string
+          schema:
+            type: string
       responses:
         "200":
           description: "Producto eliminado del carrito exitosamente"
@@ -126,11 +137,13 @@ paths:
         - in: path
           name: cid
           required: true
-          type: string
+          schema:
+            type: string
         - in: path
           name: pid
           required: true
-          type: string
+          schema:
+            type: string
         - in: body
           name: body
           required: true
@@ -155,7 +168,8 @@ paths:
         - in: path
           name: cid
           required: true
-          type: string
+          schema:
+            type: string
       responses:
         "200":
           description: "Compra realizada exitosamente"
@@ -163,3 +177,37 @@ paths:
           description: "Datos insuficientes"
         "500":
           description: "Error interno del servidor"
+
+components:
+  schemas:
+    Cart:
+      type: object
+      description: "Representa un carrito de compras en el sistema"
+      properties:
+        _id:
+          type: ObjectId
+          description: "ID autogenerado"
+        products:
+          type: array
+          description: "Lista de productos en el carrito"
+          items:
+            type: object
+            description: "Representa un producto en el carrito"
+            properties:
+              productId:
+                type: ObjectId
+                description: "El identificador único del producto"
+              quantity:
+                type: Number
+                default: 1
+                description: "La cantidad del producto en el carrito"
+      required:
+        - _id
+        - products
+      example:
+        _id: sdfghjg/&%bt7NBVCX
+        products:
+          - productId: 23%Hdsfghjkjhgfsrjkmnbv
+            quantity: 2
+          - productId: y6%ytre/HGFDSJhggpokjnbvcs
+            quantity: 1
