@@ -71,7 +71,7 @@ router.get("/products/:pid", async (req, res) => {
     const { pid } = req.params;
     if (!pid) throw new InsufficientDataError("product", ["ProductID"]);
     const data = await ProductsServices.getProductByID(pid);
-    if (!pid) throw new ProductNotFoundError();
+    if (!data) throw new ProductNotFoundError();
 
     res.status(200).send(data);
   } catch (error) {
@@ -80,7 +80,7 @@ router.get("/products/:pid", async (req, res) => {
     } else if (error instanceof ProductNotFoundError) {
       res.status(error.statusCode).send(error.getErrorData());
     } else {
-      res.status(500).send("Internal server error");
+      res.status(404).send("Internal server error");
     }
   }
 });
@@ -124,7 +124,7 @@ router.post(
       const newProductsList = await ProductsServices.getAllProducts();
       if (!newProductsList) throw new ProductNotFoundError();
       io.emit("res", newProductsList);
-      res.redirect("/");
+      res.status(201).send("prodcto creado");
     } catch (error) {
       if (error instanceof InsufficientDataError) {
         res.status(error.statusCode).send(error.getErrorData());
@@ -180,10 +180,10 @@ router.put("/products/:pid", onlyAdminOrPremiumAccess, async (req, res) => {
 });
 router.delete("/products/:pid", onlyAdminOrPremiumAccess, async (req, res) => {
   try {
+    if (!pid) throw new InsufficientDataError("product", ["ProductID"]);
     const { pid } = req.params;
     const productOwner = await ProductsServices.getProductOwnerById(pid);
 
-    if (!pid) throw new InsufficientDataError("product", ["ProductID"]);
     if (req.usersRole === "PREMIUM" && req.usersEmail !== productOwner.owner) {
       throw new AuthorizationError();
     }

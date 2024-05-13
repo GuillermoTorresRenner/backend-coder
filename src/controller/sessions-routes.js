@@ -108,7 +108,7 @@ router.post("/sessions/new-password/:hash", async (req, res) => {
 
 router.get("/sessions/logout", (req, res) => {
   req.session.destroy((err) => {
-    res.redirect("/");
+    res.status(200).redirect("/");
   });
 });
 router.post(
@@ -122,7 +122,7 @@ router.post(
           .send({ status: "error", message: "Invalid credentials" });
       } else {
         req.session.userId = req.user._id;
-        res.redirect("/products");
+        res.status(200).redirect("/products");
       }
     } catch (error) {
       Logger.error("Error:", error);
