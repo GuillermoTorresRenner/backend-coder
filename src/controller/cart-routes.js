@@ -25,18 +25,26 @@ const router = Router();
 router.get("/carts/:cid", async (req, res) => {
   try {
     const { cid } = req.params;
-    if (!cid) throw new InsufficientDataError("Cart", ["CartID"]);
+
+    if (!cid) {
+      console.log("FALTA PARÁMETRO");
+      throw new InsufficientDataError("Cart", ["CartID"]);
+    }
     const data = await CartServices.getCartByID(cid);
-    if (!data) throw new CartNotFoundError();
+    if (!data) {
+      throw new CartNotFoundError();
+    }
 
     res.status(200).send(data);
   } catch (error) {
-    if (error instanceof CartNotFoundError) {
-      res.status(error.statusCode).send(error.getErrorData());
-    } else if (error instanceof InsufficientDataError) {
-      res.status(error.statusCode).send(error.getErrorData());
+    if (
+      error instanceof CartNotFoundError ||
+      error instanceof InsufficientDataError
+    ) {
+      const errorData = err.getErrorData();
+      res.status(errorData.status).send(errorData.message);
     } else {
-      res.status(500).send("Error interno del servidor");
+      res.status(404).send("Error interno del servidor");
     }
   }
 });
@@ -45,7 +53,7 @@ router.post("/carts", async (req, res) => {
   try {
     const newCartID = await CartServices.createNewcart();
     if (!newCartID) throw new CartNotCreatedError();
-    res.status(201).send(`Carro ${newCartID} creado`);
+    res.status(201).send(newCartID);
   } catch (error) {
     if (error instanceof CartNotCreatedError) {
       res.status(error.statusCode).send(error.getErrorData());

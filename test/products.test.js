@@ -11,14 +11,13 @@ describe("Testing de endpoints /products", () => {
       .post("/sessions/login")
       .send({ email: "torresrennerguillermo@gmail.com", password: "123123" });
 
-    // Guarda la cookie para usarla en las siguientes peticiones
     cookie = res.headers["set-cookie"][0];
   });
 
   it("el endpoint GET /products debe devolver status 200 y un array con productos", async () => {
     const { statusCode, body } = await requester
       .get("/products")
-      .set("Cookie", cookie); // Usa la cookie en la petición
+      .set("Cookie", cookie);
 
     expect(statusCode).to.equal(200);
     expect(body.payload).to.be.an("array");
@@ -49,6 +48,7 @@ describe("Testing de endpoints /products", () => {
 
     expect(statusCode).to.be.equal(201);
   });
+  //reformular este test cuando tengamos la clase complementaria de CODER
   // it("el endpoint DELETE debe devolver status 200 tras borrar un objeto producto", async () => {
   //   const { statusCode } = await requester
   //     .delete(`/products/664173aa608f87e8ab68a06d`)
