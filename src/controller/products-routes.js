@@ -200,7 +200,7 @@ router.delete("/products/:pid", onlyAdminOrPremiumAccess, async (req, res) => {
     }
   }
 });
-
+//generate unit test for this endpoint
 router.get("/mockingproducts", async (req, res) => {
   try {
     const fakeProducts = MockingProductsServices.getProducts();
