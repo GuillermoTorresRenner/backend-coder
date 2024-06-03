@@ -44,14 +44,6 @@ router.post("/sessions/restore", async (req, res) => {
       res.status(500).send("Internal server error");
     }
   }
-
-  //   const { email, password } = req.body;
-  //   await UserServices.restorePasswordWithEmail(email, password);
-  //   res.redirect("/login");
-  // } catch (error) {
-  //   Logger.error("Error:", error);
-  //   res.status(500).send("Error interno del servidor");
-  // }
 });
 
 router.get("/sessions/reset/:hash", async (req, res) => {
@@ -123,6 +115,8 @@ router.post(
       } else {
         req.session.userId = req.user._id;
         res.status(200).redirect("/products");
+        //agregar función para alterar el lastconnection
+        await UserServices.updateUserLastConnection(req.user._id);
       }
     } catch (error) {
       Logger.error("Error:", error);

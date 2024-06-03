@@ -11,6 +11,13 @@ const usersSchema = mongoose.Schema({
     enum: roles,
     default: "USER",
   },
+  documents: [
+    {
+      name: { type: String },
+      reference: { type: String },
+    },
+  ],
+  last_connection: { type: Date }, // se modificará cada vez que el usuario inicie sesión
 });
 const usersModel = mongoose.model("users", usersSchema);
 export default usersModel;

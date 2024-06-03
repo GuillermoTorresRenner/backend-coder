@@ -41,4 +41,13 @@ export default class UsersRepository {
   static async changeRole(_id) {
     return UsersDao.changeRole(_id);
   }
+  static async updateUserLastConnection(_id) {
+    return UsersDao.updateLastConnection(_id);
+  }
+  static addDocument(uid, document) {
+    return UsersDao.addDocument(uid, document);
+  }
+  static async getUsersDocumentsById(_id) {
+    return UsersDao.getUsersDocumentById(_id);
+  }
 }

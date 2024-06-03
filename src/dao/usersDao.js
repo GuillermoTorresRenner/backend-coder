@@ -70,4 +70,22 @@ export default class UsersDao {
       }
     );
   }
+  static updateLastConnection(_id) {
+    return usersModel.findByIdAndUpdate(
+      { _id },
+      { last_connection: new Date() },
+      { new: true }
+    );
+  }
+  static addDocument(_id, document) {
+    return usersModel.findByIdAndUpdate(
+      { _id },
+      { $push: { documents: document } },
+      { new: true }
+    );
+  }
+
+  static async getUsersDocumentById(_id) {
+    return usersModel.findOne({ _id }, { documents: 1 }).lean();
+  }
 }
