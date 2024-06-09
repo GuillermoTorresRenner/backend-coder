@@ -124,14 +124,14 @@ router.post(
       const newProductsList = await ProductsServices.getAllProducts();
       if (!newProductsList) throw new ProductNotFoundError();
       io.emit("res", newProductsList);
-      res.status(201).send("prodcto creado");
+      res.render("successCreation");
     } catch (error) {
       if (error instanceof InsufficientDataError) {
         res.status(error.statusCode).send(error.getErrorData());
       } else if (error instanceof ProductNotFoundError) {
         res.status(error.statusCode).send(error.getErrorData());
       } else {
-        res.status(500).send("Internal server error");
+        res.status(500).send(error.message);
       }
     }
   }

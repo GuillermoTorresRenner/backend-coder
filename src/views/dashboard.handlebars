@@ -1,0 +1,158 @@
+<div class="flex flex-col justify-center items-center mx-auto w-3/4">
+  <form class="mt-10">
+    <div class="flex space-x-4">
+      <input class="border-2 border-gray-300 p-2 w-1/2" type="text" name="email" placeholder="Buscar por email">
+      <button class="bg-blue-500 text-white px-6 py-2 rounded font-medium" type="submit">Buscar</button>
+      <button class="bg-purple-500 text-white px-6 py-2 rounded font-medium" id="btnVerTodos">Ver Todos</button>
+    <button class="bg-green-500 text-white px-6 py-2 rounded font-medium">
+      <a href="/">Volver al inicio</a>
+    </button>
+   </div>
+  </form>
+  <div id="editForm" class="my-10">
+    <div class="p-4 bg-white rounded">
+      <h2 class="text-lg mb-4 text-center">Editar Usuario</h2>
+      <h2 class="text-md mb-4 text-green-700 font-bold" id="userEmail"></h2>
+      <label for="newRole">Nuevo Rol</label>
+      <select id="newRole" class="border-2 border-gray-300 p-2 w-full mb-4">
+        <option value="ADMIN">ADMIN</option>
+        <option value="PREMIUM">PREMIUM</option>
+        <option value="USER">USER</option>
+      </select>
+      <button id="changeRole" class="bg-blue-500 text-white px-6 py-2 rounded font-medium mb-2">Cambiar Rol</button>
+      <button id="cancelEdit" class="bg-red-500 text-white px-6 py-2 rounded font-medium">Cancelar</button>
+    </div>
+   
+  </div>
+  
+
+  <table class="table-auto w-full">
+    <thead>
+      <tr>
+        <th class="px-4 py-2">Nombre</th>
+        <th class="px-4 py-2">Apellido</th>
+        <th class="px-4 py-2">Correo</th>
+        <th class="px-4 py-2">Rol</th>
+        <th class="px-4 py-2">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  function loadUsers(users) {
+    const tbody = document.querySelector('tbody');
+    tbody.innerHTML = '';
+    users.forEach(user => {
+      const row = `
+        <tr>
+          <td class="border px-4 py-2">${user.first_name}</td>
+          <td class="border px-4 py-2">${user.last_name}</td>
+          <td class="border px-4 py-2">${user.email}</td>
+          <td class="border px-4 py-2">${user.role}</td>
+          <td class="border px-4 py-2">
+            <button data-email="${user.email}" data-role="${user.role}" class="edit-btn bg-blue-500 text-white px-4 py-2 rounded mr-2">Editar</button>
+            <button data-email="${user.email}" data-role="${user.role}" class="delete-btn bg-red-500 text-white px-4 py-2 rounded">Eliminar</button>
+          </td>
+        </tr>
+      `;
+      tbody.innerHTML += row;
+    });
+
+    document.querySelectorAll('.delete-btn').forEach(button => {
+      button.addEventListener('click', (event) => {
+        const email = event.target.getAttribute('data-email');
+        Swal.fire({
+          title: '¿Estás seguro?',
+          text: "¡No podrás revertir esto!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'CONFIRMAR'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            fetch(`/api/users/${email}`, {
+              method: 'DELETE',
+            })
+            .then(() => {
+              Swal.fire(
+                '¡Eliminado!',
+                'El usuario ha sido eliminado.',
+                'success'
+              );
+              document.getElementById('btnVerTodos').click();
+            });
+          }
+        })
+      });
+    });
+
+    document.querySelectorAll('.edit-btn').forEach(button => {
+      button.addEventListener('click', (event) => {
+        const email = event.target.getAttribute('data-email');
+        const userEmail = document.getElementById('userEmail');
+        userEmail.innerText = email;
+        document.getElementById('changeRole').addEventListener('click', () => {
+          Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¡Estás a punto de cambiar el rol de este usuario!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'CONFIRMAR'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              const newRole = document.getElementById('newRole').value;
+              fetch(`/api/users?email=${email}&newRole=${newRole}`, {
+                method: 'PUT',
+              })
+              .then(() => {
+                Swal.fire(
+                  '¡Cambiado!',
+                  'El rol del usuario ha sido cambiado.',
+                  'success'
+                );
+                document.getElementById('btnVerTodos').click();
+              });
+            }
+          });
+        });
+        document.getElementById('cancelEdit').addEventListener('click', () => {
+        });
+      });
+    });
+  }
+
+  document.getElementById('btnVerTodos').addEventListener('click', () => {
+    const email = document.querySelector('input[name="email"]').value;
+    email.value = '';
+
+    fetch('/api/users', {
+      method: 'GET',
+    })
+      .then(response => response.json())
+      .then(users => loadUsers(users));
+  });
+
+  document.querySelector('form').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const email = document.querySelector('input[name="email"]').value;
+    if (!email || !email.includes('@')) {
+      fetch('/api/users', {
+        method: 'GET',
+      })
+        .then(response => response.json())
+        .then(users => loadUsers(users));
+    } else {
+      fetch(`/api/users/${email}`, {
+        method: 'GET',
+      })
+        .then(response => response.json())
+        .then(user => loadUsers([user]));
+    }
+  });
+</script>

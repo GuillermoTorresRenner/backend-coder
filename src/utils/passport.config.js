@@ -26,7 +26,7 @@ const initializaPassport = () => {
             return done(null, false);
           }
 
-          const user = UsersDao.register(
+          const user = await UsersDao.register(
             first_name,
             last_name,
             email,

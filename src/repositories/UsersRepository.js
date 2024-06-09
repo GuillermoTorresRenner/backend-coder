@@ -50,4 +50,16 @@ export default class UsersRepository {
   static async getUsersDocumentsById(_id) {
     return UsersDao.getUsersDocumentById(_id);
   }
+  static async getAllUsers() {
+    return await UsersDao.getAllUsers();
+  }
+  static async deleteInactiveAccounts() {
+    return await UsersDao.deleteInactiveAccounts();
+  }
+  static async deleteUserByEmail(email) {
+    return await UsersDao.deleteUserByEmail(email);
+  }
+  static updateRoleByEmail(email, role) {
+    return UsersDao.updateRoleByEmail(email, role);
+  }
 }

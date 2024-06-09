@@ -5,12 +5,29 @@
             {{#if userData}}
             <span class="text-white ml-4">Bienvenido, {{userData.first_name}} {{userData.last_name}}</span>
             {{/if}}
+            {{#if userData}}
+            <span class="hidden" id="userRole">{{userData.role}}</span>
+            {{/if}}
         </div>
         {{#if userData}}
-        <a href="/api/sessions/logout" id="logout" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded">
+        <a href="/dashboard" id="dashboard"
+            class="bg-yellow-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded hidden">
+            Dashboard
+        </a>
+        {{/if}}
+        {{#if userData}}
+        <a href="/new-product" id="newProduct"
+            class="bg-green-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded hidden">
+            Create Product
+        </a>
+        {{/if}}
+        {{#if userData}}
+        <a href="/api/sessions/logout" id="logout" class="bg-red-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
             Logout
         </a>
         {{/if}}
+
+       
     </div>
 </nav>
 
@@ -92,6 +109,14 @@
         }
 
         window.location.href = `/products?query=${JSON.stringify(query)}`;
+    }
+
+    const UserRole = document.getElementById('userRole').innerText;
+    if (UserRole === 'ADMIN') {
+        document.getElementById('dashboard').style.display = 'block';
+    }
+    if (UserRole === 'ADMIN'|| UserRole === 'PREMIUM') {
+        document.getElementById('newProduct').style.display = 'block';
     }
 
      

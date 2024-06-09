@@ -5,6 +5,7 @@ import auth from "../middlewares/auth.js";
 import multer from "multer";
 import path from "path";
 import { UserNotFoundError } from "../utils/CustomErrors.js";
+import { onlyAdminAccess } from "../middlewares/permissions.js";
 
 //multer config
 const storage = multer.diskStorage({
@@ -136,4 +137,51 @@ router.put("/users/premium/:uid", auth, async (req, res) => {
       .send({ text: "Internal server error", error: error.message });
   }
 });
+router.get("/users", auth, onlyAdminAccess, async (req, res) => {
+  try {
+    const users = await UserServices.getAllUsers();
+    res.status(200).send(users);
+  } catch (error) {
+    res.status(500).send("Internal server error");
+  }
+});
+
+router.delete("/users", auth, onlyAdminAccess, async (req, res) => {
+  try {
+    const users = await UserServices.deleteInactiveAccounts();
+    res.status(200).send(users);
+  } catch (error) {
+    res.status(500).send("Internal server error");
+  }
+});
+
+router.get("/users/:email", auth, onlyAdminAccess, async (req, res) => {
+  try {
+    const { email } = req.params;
+    const user = await UserServices.getUserByEmail(email);
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(500).send("Internal server error");
+  }
+});
+
+router.delete("/users/:email", auth, onlyAdminAccess, async (req, res) => {
+  try {
+    const { email } = req.params;
+    const user = await UserServices.deleteUserByEmail(email);
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(500).send("Internal server error");
+  }
+});
+router.put("/users", auth, onlyAdminAccess, async (req, res) => {
+  try {
+    const { email, newRole } = req.query;
+    const user = await UserServices.updateRoleByEmail(email, newRole);
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(500).send("Internal server error");
+  }
+});
+
 export default router;

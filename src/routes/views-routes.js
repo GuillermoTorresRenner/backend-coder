@@ -3,6 +3,7 @@ import ProductsDao from "../dao/productDao.js";
 import CartDao from "../dao/cartDao.js";
 import UsersDao from "../dao/usersDao.js";
 import auth from "../middlewares/auth.js";
+import { onlyAdminAccess } from "../middlewares/permissions.js";
 
 const router = Router();
 
@@ -54,8 +55,8 @@ router.get("/realtimeproducts", auth, (req, res) => {
   res.render("realTimeProducts");
 });
 //Ruta para ingresar productos
-router.get("/admin", auth, (req, res) => {
-  res.render("admin");
+router.get("/new-product", auth, (req, res) => {
+  res.render("newProduct");
 });
 //Ruta para chat
 router.get("/chat", auth, (req, res) => {
@@ -74,9 +75,13 @@ router.get("/restore-password/:hash", (req, res) => {
 router.get("/link-sended", (req, res) => {
   res.render("linkSended");
 });
-//confimar PAssword cambiado
+//confimar Psssword cambiado
 router.get("/password-success", (req, res) => {
   res.render("passwordChanges");
+});
+//dashboard de gestión de usuarios
+router.get("/dashboard", auth, onlyAdminAccess, async (req, res) => {
+  res.render("dashboard");
 });
 
 export default router;

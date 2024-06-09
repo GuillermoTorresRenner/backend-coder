@@ -17,7 +17,10 @@ export default class UsersDao {
   }
   static async getUserByID(_id) {
     return usersModel
-      .findOne({ _id }, { first_name: 1, last_name: 1, email: 1, age: 1 })
+      .findOne(
+        { _id },
+        { first_name: 1, last_name: 1, email: 1, age: 1, role: 1 }
+      )
       .lean();
   }
   static async getRoleByID(_id) {
@@ -87,5 +90,32 @@ export default class UsersDao {
 
   static async getUsersDocumentById(_id) {
     return usersModel.findOne({ _id }, { documents: 1 }).lean();
+  }
+  static async getAllUsers() {
+    return usersModel
+      .find({}, { first_name: 1, last_name: 1, email: 1, role: 1 })
+      .lean();
+  }
+  static async deleteInactiveAccounts(diasInactividad = 2) {
+    const limitTime = new Date(
+      Date.now() - diasInactividad * 24 * 60 * 60 * 1000
+    );
+    return usersModel.deleteMany({
+      last_connection: { $lt: new Date(limitTime) },
+    });
+  }
+
+  static async deleteUserByEmail(email) {
+    return usersModel.findOneAndDelete({ email });
+  }
+
+  static updateRoleByEmail(email, role) {
+    return usersModel.findOneAndUpdate(
+      { email },
+      { $set: { role } },
+      {
+        new: true,
+      }
+    );
   }
 }

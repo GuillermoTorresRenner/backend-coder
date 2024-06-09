@@ -156,7 +156,11 @@ router.get(
 );
 
 passport.serializeUser((user, done) => {
-  done(null, user._id);
+  if (user) {
+    done(null, user._id);
+  } else {
+    done(new Error("User not found"), null);
+  }
 });
 
 passport.deserializeUser(async (id, done) => {
