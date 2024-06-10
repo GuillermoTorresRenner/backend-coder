@@ -15,11 +15,11 @@
             Dashboard
         </a>
         {{/if}}
+        
         {{#if userData}}
-        <a href="/new-product" id="newProduct"
-            class="bg-green-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded hidden">
-            Create Product
-        </a>
+        <a href="/products-admin" id="productsAdmin"
+            class="bg-purple-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded hidden">
+Administrar Productos        </a>
         {{/if}}
         {{#if userData}}
         <a href="/api/sessions/logout" id="logout" class="bg-red-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
@@ -116,8 +116,9 @@
         document.getElementById('dashboard').style.display = 'block';
     }
     if (UserRole === 'ADMIN'|| UserRole === 'PREMIUM') {
-        document.getElementById('newProduct').style.display = 'block';
+        document.getElementById('productsAdmin').style.display = 'block';
     }
+    
 
      
 

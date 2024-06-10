@@ -35,6 +35,22 @@ export const onlyUsersAccess = async (req, res, next) => {
     }
   }
 };
+export const onlyPremiumAccess = async (req, res, next) => {
+  try {
+    const permission = await UserServices.getRoleByID(req.session.userId);
+    if (permission.role === "PREMIUM") {
+      next();
+    } else {
+      throw new AuthorizationError();
+    }
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      res.status(error.statusCode).send(error.getErrorData());
+    } else {
+      res.status(500).send(error);
+    }
+  }
+};
 
 export const onlyAdminOrPremiumAccess = async (req, res, next) => {
   try {

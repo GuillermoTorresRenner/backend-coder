@@ -1,4 +1,5 @@
 import productsModel from "../model/products.model.js";
+import { UserServices } from "../repositories/Repositories.js";
 export default class ProductsDao {
   static async createNewProduct(newProduct) {
     return productsModel.create(newProduct);
@@ -63,5 +64,10 @@ export default class ProductsDao {
   }
   static async getProductsIdByCode(code) {
     return await productsModel.findOne({ code }, { _id: 1 });
+  }
+  static async getOwnersProductsById(ownerId) {
+    const user = await UserServices.getUserByID(ownerId);
+    const usersEmail = user.email;
+    return await productsModel.find({ owner: usersEmail }).lean();
   }
 }

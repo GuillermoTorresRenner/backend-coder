@@ -32,4 +32,7 @@ export default class ProductsRepository {
   static async getProductsIdByCode(code) {
     return await ProductsDao.getProductsIdByCode(code);
   }
+  static async getOwnersProductsById(ownerId) {
+    return await ProductsDao.getOwnersProductsById(ownerId);
+  }
 }

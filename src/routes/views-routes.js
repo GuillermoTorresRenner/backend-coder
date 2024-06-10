@@ -3,7 +3,15 @@ import ProductsDao from "../dao/productDao.js";
 import CartDao from "../dao/cartDao.js";
 import UsersDao from "../dao/usersDao.js";
 import auth from "../middlewares/auth.js";
-import { onlyAdminAccess } from "../middlewares/permissions.js";
+import {
+  onlyAdminAccess,
+  onlyAdminOrPremiumAccess,
+  onlyPremiumAccess,
+} from "../middlewares/permissions.js";
+import {
+  ProductsServices,
+  UserServices,
+} from "../repositories/Repositories.js";
 
 const router = Router();
 
@@ -83,5 +91,40 @@ router.get("/password-success", (req, res) => {
 router.get("/dashboard", auth, onlyAdminAccess, async (req, res) => {
   res.render("dashboard");
 });
+//productos creados por el usuario
+router.get(
+  "/products-admin",
+  auth,
+  onlyAdminOrPremiumAccess,
+  async (req, res) => {
+    try {
+      const { userId } = req.session;
+      const usersRole = await UserServices.getRoleByID(userId);
+      let products = {};
+      if (usersRole.role === "ADMIN") {
+        products = await ProductsServices.getAllProducts();
+      } else {
+        products = await ProductsServices.getOwnersProductsById(userId);
+      }
+      res.render("productsAdmin", { products });
+    } catch (error) {}
+  }
+);
+router.get(
+  "/update-product/:id",
+  auth,
+  onlyAdminOrPremiumAccess,
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const product = await ProductsServices.getProductByID(id);
+      console.log(product);
+
+      res.render("editProduct", { product });
+    } catch (error) {
+      res.status(500).send("Internal server error");
+    }
+  }
+);
 
 export default router;

@@ -1,0 +1,79 @@
+<div class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <h1 class="text-2xl text-center font-bold mb-5">Gestión de productos</h1>
+    <a href="/new-product" id="productsAdmin"
+        class="bg-green-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded mb-5">
+        Crear productos 
+    </a>
+        
+
+    <table class="table-auto w-3/4 mt-5 text-center bg-white shadow-md rounded-lg overflow-hidden">
+        <thead class="bg-blue-500 text-white">
+            <tr>
+                <th class="px-4 py-2">Ítem</th>
+                <th class="px-4 py-2">Descripción</th>
+                <th class="px-4 py-2">Precio</th>
+                <th class="px-4 py-2">Estado</th>
+                <th class="px-4 py-2">Código</th>
+                <th class="px-4 py-2">Stock</th>
+                <th class="px-4 py-2">Categoría</th>
+                <th class="px-4 py-2">Propietario</th>
+                <th class="px-4 py-2">Acciones</th>
+            </tr>
+        </thead>
+        <tbody class="text-gray-700">
+            {{#each products}}
+            <tr id="row-{{this._id}}">
+                <td class="border px-4 py-2 text-blue-900">{{this.title}}</td>
+                <td class="border px-4 py-2 text-blue-900">{{this.description}}</td>
+                <td class="border px-4 py-2 text-blue-900">{{this.price}}</td>
+                <td class="border px-4 py-2 text-blue-900">
+                    {{#if this.status}}
+                    Activo
+                    {{else}}
+                    Inactivo
+                    {{/if}}
+                </td>
+                <td class="border px-4 py-2 text-blue-900">{{this.code}}</td>
+                <td class="border px-4 py-2 text-blue-900">{{this.stock}}</td>
+                <td class="border px-4 py-2 text-blue-900">{{this.category}}</td>
+                <td class="border px-4 py-2 text-blue-900">{{this.owner}}</td>
+                <td class="border px-4 py-2 text-blue-900">
+                    <a href="/update-product/{{this._id}}"class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">Editar</a>                
+                    <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onclick="deleteProduct('{{this._id}}')">Eliminar</button>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+
+<script>
+
+
+function deleteProduct(id) {
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "No podrás revertir esto!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#1256FF',
+        confirmButtonText: 'Eliminar!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/api/products/${id}`, {
+                method: 'DELETE',
+            })
+            .then(() => {
+                window.location.href = '/products-admin';
+            })
+            .catch (error => {
+                console.log(error);
+            });
+        }
+    })
+}
+
+  
+    
+</script>

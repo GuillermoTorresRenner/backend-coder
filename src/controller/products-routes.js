@@ -16,6 +16,7 @@ import {
   ProductNotFoundError,
   AuthorizationError,
 } from "../utils/CustomErrors.js";
+import NodeMailer from "../utils/NodeMailer.js";
 
 const router = Router();
 
@@ -142,7 +143,6 @@ router.put("/products/:pid", onlyAdminOrPremiumAccess, async (req, res) => {
     const { body } = req;
     const { pid } = req.params;
     const productOwner = await ProductsServices.getProductOwnerById(pid);
-    /////////////
     const { title, description, price, code, stock, category } = body;
     if (
       !pid ||
@@ -180,12 +180,21 @@ router.put("/products/:pid", onlyAdminOrPremiumAccess, async (req, res) => {
 });
 router.delete("/products/:pid", onlyAdminOrPremiumAccess, async (req, res) => {
   try {
-    if (!pid) throw new InsufficientDataError("product", ["ProductID"]);
     const { pid } = req.params;
+    if (!pid) throw new InsufficientDataError("product", ["ProductID"]);
     const productOwner = await ProductsServices.getProductOwnerById(pid);
-
+    const product = await ProductsServices.getProductByID(pid);
     if (req.usersRole === "PREMIUM" && req.usersEmail !== productOwner.owner) {
       throw new AuthorizationError();
+    }
+    //agregar funcionalidades para avisar a premium que un producto ha sido eliminado
+    if (req.usersRole === "PREMIUM") {
+      NodeMailer.sendMail({
+        from: "Infuzuion",
+        to: productOwner.owner,
+        subject: "Producto eliminado",
+        text: `El producto "${product.title.toUpperCase()}" ha sido eliminado de la base de datos de Infuzuion.`,
+      });
     }
     await ProductsServices.deleteProduct(pid);
     res.status(200).send("Articulo eliminado");
@@ -196,7 +205,7 @@ router.delete("/products/:pid", onlyAdminOrPremiumAccess, async (req, res) => {
     ) {
       res.status(error.statusCode).send(error.getErrorData());
     } else {
-      res.status(500).send("Internal server error");
+      res.status(500).send(error.message);
     }
   }
 });

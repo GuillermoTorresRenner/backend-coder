@@ -1,0 +1,88 @@
+<h1 class="text-3xl text-center font-bold mt-10">Editar producto</h1>
+
+<div class="w-1/4 mx-auto my-10">
+
+    <form >
+        <div class="mb-4">
+            <label for="title" class="block text-sm font-medium text-gray-600">Título</label>
+            <input type="text" id="title" name="title" value="{{product.title}}" class="mt-1 p-2 w-full border rounded-md">
+        </div>
+
+        <div class="mb-4">
+            <label for="description" class="block text-sm font-medium text-gray-600">Descripción</label>
+            <textarea id="description" name="description" rows="3" class="mt-1 p-2 w-full border rounded-md">{{product.description}}</textarea>
+        </div>
+
+        <div class="mb-4">
+            <label for="code" class="block text-sm font-medium text-gray-600">Código</label>
+            <input type="text" id="code" name="code" value="{{product.code}}" class="mt-1 p-2 w-full border rounded-md">
+        </div>
+
+        <div class="mb-4">
+            <label for="price" class="block text-sm font-medium text-gray-600">Precio</label>
+            <input type="number" id="price" name="price" value="{{product.price}}" class="mt-1 p-2 w-full border rounded-md">
+        </div>
+
+        
+        <div class="mb-4">
+            <label for="stock" class="block text-sm font-medium text-gray-600">Stock</label>
+            <input type="number" id="stock" name="stock" value="{{product.stock}}" class="mt-1 p-2 w-full border rounded-md">
+        </div>
+
+        <div class="mb-4">
+            <label for="category" class="block text-sm font-medium text-gray-600">Categoría</label>
+            <input type="text" id="category" name="category" value="{{product.category}}" class="mt-1 p-2 w-full border rounded-md">
+        </div>
+
+    </form>
+        <div class="mb-4">
+            <button id="updateProductBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Actualizar producto</button>
+        </div>
+</div>
+
+
+<script>
+    document.getElementById('updateProductBtn').addEventListener('click', function() {
+        const productId = '{{product._id}}';
+        const title = document.getElementById('title').value;
+        const description = document.getElementById('description').value;
+        const code = document.getElementById('code').value;
+        const price = document.getElementById('price').value;
+        const stock = document.getElementById('stock').value;
+        const category = document.getElementById('category').value;
+
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¡Vas a actualizar el producto!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#0F0',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Actualizar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                try {
+                    fetch(`/api/products/${productId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            title,
+                            description,
+                            code,
+                            price,
+                            stock,
+                            category
+                        })
+                    }).then(() => {
+                        window.location.href = '/products-admin';
+                    });
+                }
+                catch (error) {
+                    console.log(error);
+                }
+            }
+        });
+    });
+</script>
