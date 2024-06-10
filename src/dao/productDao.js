@@ -68,6 +68,7 @@ export default class ProductsDao {
   static async getOwnersProductsById(ownerId) {
     const user = await UserServices.getUserByID(ownerId);
     const usersEmail = user.email;
-    return await productsModel.find({ owner: usersEmail }).lean();
+    const payload = await productsModel.find({ owner: usersEmail }).lean();
+    return { payload };
   }
 }
