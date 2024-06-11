@@ -7,8 +7,10 @@ import {
   onlyAdminAccess,
   onlyAdminOrPremiumAccess,
   onlyPremiumAccess,
+  onlyPremiumOrUserAccess,
 } from "../middlewares/permissions.js";
 import {
+  CartServices,
   ProductsServices,
   UserServices,
 } from "../repositories/Repositories.js";
@@ -52,10 +54,20 @@ router.get("/product/:_id", auth, async (req, res) => {
   const data = await ProductsDao.getProductByID(_id);
   res.render("product", { data });
 });
-router.get("/cart/:_id", auth, async (req, res) => {
-  const { _id } = req.params;
-  const data = await CartDao.getCartByID(_id);
-  res.render("cart", { data });
+
+router.get("/my-cart", auth, async (req, res) => {
+  const uid = req.session.userId;
+  const cid = await UserServices.getCartIDByUserID(uid);
+  const data = await CartServices.getCartByID(cid);
+  data.products.map((pro) => {
+    pro.total = pro.productId.price * pro.quantity;
+  });
+  const totalPrice = data.products.reduce(
+    (acc, product) => acc + product.total,
+    0
+  );
+  console.log(data.products);
+  res.render("cart", { data, totalPrice });
 });
 
 //Ruta para el socket
@@ -111,7 +123,7 @@ router.get(
   }
 );
 router.get(
-  "/update-product/:id",
+  "update-product/:id",
   auth,
   onlyAdminOrPremiumAccess,
   async (req, res) => {
@@ -126,5 +138,22 @@ router.get(
     }
   }
 );
+router.get("/payments", auth, onlyPremiumOrUserAccess, async (req, res) => {
+  try {
+    const uid = req.session.userId;
+    const cid = await UserServices.getCartIDByUserID(uid);
+    const data = await CartServices.getCartByID(cid);
+    data.products.map((pro) => {
+      pro.total = pro.productId.price * pro.quantity;
+    });
+    const total = data.products.reduce(
+      (acc, product) => acc + product.total,
+      0
+    );
+    res.render("payments", { total });
+  } catch (error) {
+    res.status(500).send("Internal server error");
+  }
+});
 
 export default router;

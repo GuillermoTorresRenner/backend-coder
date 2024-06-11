@@ -1,5 +1,4 @@
 import RestoreDao from "../dao/restore.Dao.js";
-import UserDTO from "../dto/users.dto.js";
 
 export default class RestoreRepository {
   static async createNewRestore(userId) {

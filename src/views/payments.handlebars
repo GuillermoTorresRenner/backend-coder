@@ -1,0 +1,73 @@
+<div>
+    <div class="flex flex-col items-center justify-center min-h-screen">
+        <h1 class="text-center text-4xl my-5">Pago</h1>
+        <h2 class="text-center text-2xl my-5">Total a pagar: ${{total}}</h2>
+        <form id="paymentForm" class="w-full max-w-lg">
+            <div class="flex flex-wrap -mx-3 mb-6">
+                <!-- Número de Tarjeta -->
+                <div class="w-full px-3">
+                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="card-number">
+                        Número de Tarjeta
+                    </label>
+                    <input oninput="validateInput(this)" class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="card-number" type="text" placeholder="1234123412341234" pattern="\d{16}" title="El número de tarjeta debe tener 16 dígitos.">
+                </div>
+                <!-- Fecha de Expiración -->
+                <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="card-expiration">
+                        Fecha de Expiración
+                    </label>
+                    <input oninput="validateInput(this)" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="card-expiration" type="text" placeholder="MMYY" pattern="\d{4}" title="La fecha de expiración debe estar en formato MMYY.">
+                </div>
+                <!-- CVV -->
+                <div class="w-full md:w-1/2 px-3">
+                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="card-cvv">
+                        CVV
+                    </label>
+                    <input oninput="validateInput(this)" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="card-cvv" type="text" placeholder="CVV" pattern="\d{3,4}" title="El CVV debe tener 3 o 4 dígitos.">
+                </div>
+            </div>
+            <div class="flex justify-center">
+                <div class="md:w-1/3">
+                    <button id="payButton" class="shadow bg-gray-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="button" disabled onclick="submitPayment()">
+                        Pagar
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    function validateInput(input) {
+        const form = document.getElementById('paymentForm');
+        let isValid = form.checkValidity();
+        const payButton = document.getElementById('payButton');
+        payButton.disabled = !isValid;
+        // Agregar o quitar clases basadas en la validez del formulario
+        payButton.classList.toggle('bg-gray-500', !isValid);
+        payButton.classList.toggle('bg-blue-500', isValid);
+        payButton.classList.toggle('enabled-btn', isValid); // Clase para controlar el hover
+    }
+
+    // Función para enviar la petición POST al endpoint /api/cart/purchase
+    async function submitPayment() {
+        const formData = new FormData(document.getElementById('paymentForm'));
+        try {
+            const response = await fetch('/api/cart/purchase', {
+                method: 'POST',
+                
+            });
+        
+        } catch (error) {
+            // Manejar errores de la petición aquí
+            console.error('Error al realizar la petición:', error);
+            alert('Error al conectar con el servidor');
+        }
+    }
+</script>
+<style>
+    /* Estilos para el botón habilitado */
+    .enabled-btn:hover {
+        background-color: #4299e1;
+        /* Azul más claro para el hover */
+    }
+</style>

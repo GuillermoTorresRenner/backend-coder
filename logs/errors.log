@@ -16,3 +16,6 @@ error: 09-06-2024 - Error Type: AuthorizationError - Status: 403 - MesageYou are
 error: 09-06-2024 - Error Type: AuthorizationError - Status: 403 - MesageYou are not authorized to perform this action
 error: 09-06-2024 - Error Type: AuthorizationError - Status: 403 - MesageYou are not authorized to perform this action
 error: 09-06-2024 - Error Type: AuthorizationError - Status: 403 - MesageYou are not authorized to perform this action
+error: 11-06-2024 - Error Type: InsufficientDataError - Status: 400 - MesageInsufficient required data for product: quantity,ProductID
+error: 11-06-2024 - Error Type: InsufficientDataError - Status: 400 - MesageInsufficient required data for product: quantity,ProductID
+error: 11-06-2024 - Error Type: InsufficientDataError - Status: 400 - MesageInsufficient required data for product: quantity,ProductID

@@ -1,5 +1,4 @@
 import UsersDao from "../dao/usersDao.js";
-import UserDTO from "../dto/users.dto.js";
 
 export default class UsersRepository {
   static async register(first_name, last_name, email, age, password, role) {
@@ -13,12 +12,10 @@ export default class UsersRepository {
     );
   }
   static async getUserByEmail(email) {
-    const user = await UsersDao.getUserByEmail(email);
-    return UserDTO.getUser(user);
+    return await UsersDao.getUserByEmail(email);
   }
   static async getUserByID(_id) {
-    const user = await UsersDao.getUserByID(_id);
-    return UserDTO.getUser(user);
+    return await UsersDao.getUserByID(_id);
   }
   static async restorePasswordWithEmail(email, password) {
     return await UsersDao.restorePasswordWithEmail(email, password);
@@ -61,5 +58,14 @@ export default class UsersRepository {
   }
   static updateRoleByEmail(email, role) {
     return UsersDao.updateRoleByEmail(email, role);
+  }
+  static addCartToUser(userId, cartId) {
+    return UsersDao.addCartToUser(userId, cartId);
+  }
+  static removeCartToUser(userId) {
+    return UsersDao.removeCartToUser(userId);
+  }
+  static getCartIDByUserID(userId) {
+    return UsersDao.getCartIDByUserID(userId);
   }
 }

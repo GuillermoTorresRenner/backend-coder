@@ -72,3 +72,23 @@ export const onlyAdminOrPremiumAccess = async (req, res, next) => {
     }
   }
 };
+export const onlyPremiumOrUserAccess = async (req, res, next) => {
+  try {
+    const permission = await UserServices.getRoleByID(req.session.userId);
+    const email = await UserServices.getusersEmailById(req.session.userId);
+
+    req.usersRole = permission.role; // Store the user role in the request object
+    req.usersEmail = email.email;
+    if (permission.role === "USER" || permission.role === "PREMIUM") {
+      next();
+    } else {
+      throw new AuthorizationError();
+    }
+  } catch (error) {
+    if (error instanceof AuthorizationError) {
+      res.status(error.statusCode).send(error.getErrorData());
+    } else {
+      res.status(500).send(error);
+    }
+  }
+};

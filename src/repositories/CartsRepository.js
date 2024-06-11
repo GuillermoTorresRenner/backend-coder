@@ -1,7 +1,9 @@
 import CartDao from "../dao/cartDao.js";
+import UsersRepository from "./UsersRepository.js";
 export default class CartRepository {
   static async createNewcart() {
-    return await CartDao.createNewcart();
+    const cart = await CartDao.createNewcart();
+    return cart;
   }
   static async addToCart(_id, pid, quantity) {
     return await CartDao.addToCart(_id, pid, quantity);

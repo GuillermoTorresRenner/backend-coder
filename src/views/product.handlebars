@@ -11,7 +11,7 @@
         <p class="text-gray-600">Código: {{code}}</p>
         <p class="text-gray-600">Stock: {{stock}}</p>
         <p class="text-gray-600">Categoría: {{category}}</p>
-        <p class="text-gray-600" hidden name="pid" id="pid">{{_id}}</p>
+        <p class="text-gray-600"  name="pid" hidden id="pid">{{_id}}</p>
         <div class="flex justify-center gap-10 items-end mt-4">
             <div>
                 <label for="quantity" class="block text-sm font-medium text-gray-700">Cantidad:</label>
@@ -25,10 +25,33 @@
     </div>
 </div>
 {{/with}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
 <script>
 function addToCart(){
-    const pid=document.getElementById("pid").innerText
-   alert(`El producto: ${pid} será agregado al carrito`)
+    const pid = document.getElementById("pid").innerText;
+    const quantity = document.getElementById("quantity").value;
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¿Quieres agregar este producto al carrito?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#10FF10',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Agregar al carrito'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/api/cart?pid=${pid}&quantity=${quantity}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(() => window.location.href = '/')
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    })
 }
 </script>

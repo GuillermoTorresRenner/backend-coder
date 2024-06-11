@@ -118,4 +118,24 @@ export default class UsersDao {
       }
     );
   }
+  static addCartToUser(userId, cartId) {
+    return usersModel.findByIdAndUpdate(
+      { _id: userId },
+      { cartId },
+      { new: true }
+    );
+  }
+  static async getCartIDByUserID(userId) {
+    const user = await usersModel
+      .findOne({ _id: userId }, { cartId: 1 })
+      .lean();
+    return user ? user.cartId : null;
+  }
+  static removeCartToUser(userId) {
+    return usersModel.findByIdAndUpdate(
+      { _id: userId },
+      { cartId: "" },
+      { new: true }
+    );
+  }
 }

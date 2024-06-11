@@ -17,7 +17,8 @@ const usersSchema = mongoose.Schema({
       reference: { type: String },
     },
   ],
-  last_connection: { type: Date }, // se modificará cada vez que el usuario inicie sesión
+  last_connection: { type: Date },
+  cartId: { type: mongoose.Schema.Types.ObjectId, ref: "carts", default: null },
 });
 const usersModel = mongoose.model("users", usersSchema);
 export default usersModel;
