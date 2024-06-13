@@ -1,3 +1,13 @@
+/**
+ * Este archivo contiene las rutas y controladores relacionados con los productos.
+ * Utiliza Express para definir las rutas y Multer para el manejo de archivos.
+ * También utiliza los servicios de ProductsServices y MockingProductsServices para interactuar con la base de datos de productos.
+ * Las rutas incluyen operaciones como obtener todos los productos, obtener un producto por su ID, crear un nuevo producto, actualizar un producto y eliminar un producto.
+ * También incluye una ruta para obtener productos falsos para pruebas.
+ */
+/**
+ *
+ */
 import { Router } from "express";
 import {
   MockingProductsServices,
@@ -46,6 +56,13 @@ const upload = multer({
 
 ///////////////////////ROUTES//////////////////////////////////////////////////
 
+/**
+ * Esta función se encarga de obtener todos los productos de la base de datos permitiendo el fintrado de los mismos mediante los query params
+query: string que se utiliza para buscar productos por su título o descripción.
+limit: número de productos a mostrar por página.
+page: número de página a mostrar.
+sort: string que se utiliza para ordenar los productos por precio o fecha de creación.
+ *  */
 router.get("/products", async (req, res) => {
   const { query, limit, page, sort } = req.query;
 
@@ -67,6 +84,9 @@ router.get("/products", async (req, res) => {
   }
 });
 
+/**
+ * Esta función se encarga de obtener un producto por su ID.
+ *  */
 router.get("/products/:pid", async (req, res) => {
   try {
     const { pid } = req.params;
@@ -86,6 +106,11 @@ router.get("/products/:pid", async (req, res) => {
   }
 });
 
+/**
+ * Esta función se encarga de crear un nuevo producto en la base de datos.
+ * Solo los usuarios con rol "ADMIN" o "PREMIUM" pueden crear productos.
+ * Los productos creados por usuarios "PREMIUM" se asocian a su correo electrónico.
+ * */
 router.post(
   "/products",
   upload.single("img"),
@@ -138,6 +163,11 @@ router.post(
   }
 );
 
+/**
+ * Esta función se encarga de actualizar un producto en la base de datos.
+ * Solo los usuarios con rol "ADMIN" o "PREMIUM" pueden actualizar productos.
+ * Los productos solo pueden ser actualizados por su propietario.
+ * */
 router.put("/products/:pid", onlyAdminOrPremiumAccess, async (req, res) => {
   try {
     const { body } = req;
@@ -178,6 +208,12 @@ router.put("/products/:pid", onlyAdminOrPremiumAccess, async (req, res) => {
     }
   }
 });
+
+/**
+ * Esta función se encarga de eliminar un producto de la base de datos.
+ * Solo los usuarios con rol "ADMIN" o "PREMIUM" pueden eliminar productos.
+ * Los productos solo pueden ser eliminados por su propietario salvo para Admin que puede eliminar cualquier producto.
+ * */
 router.delete("/products/:pid", onlyAdminOrPremiumAccess, async (req, res) => {
   try {
     const { pid } = req.params;
@@ -209,7 +245,10 @@ router.delete("/products/:pid", onlyAdminOrPremiumAccess, async (req, res) => {
     }
   }
 });
-//generate unit test for this endpoint
+
+/**
+ * Esta función se encarga de obtener productos falsos para pruebas mediante el uso de MockingProductsServices.
+ * */
 router.get("/mockingproducts", async (req, res) => {
   try {
     const fakeProducts = MockingProductsServices.getProducts();

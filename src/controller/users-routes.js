@@ -1,3 +1,11 @@
+/*
+  Este archivo contiene las rutas de la API que tienen que ver con los usuarios.
+  Utiliza Express para definir las rutas y Multer para el manejo de archivos.
+  También utiliza los servicios de UserServices para interactuar con la base de datos de usuarios.
+  Las rutas incluyen operaciones como obtener todos los usuarios, obtener un usuario por su ID, actualizar un usuario y eliminar un usuario.
+  También incluye rutas para subir documentos y cambiar el rol de un usuario.
+  */
+
 import { Router } from "express";
 import { UserServices } from "../repositories/Repositories.js";
 const router = Router();
@@ -7,7 +15,9 @@ import path from "path";
 import { UserNotFoundError } from "../utils/CustomErrors.js";
 import { onlyAdminAccess } from "../middlewares/permissions.js";
 
-//multer config
+//-------------------------------multer config--------------------------------
+
+//Configuración del storage para guardar los archivos
 const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     const { uid } = req.params;
@@ -30,6 +40,8 @@ const storage = multer.diskStorage({
     cb(null, path);
   },
 });
+
+//Configuración de las opciones para realizar el upload
 const upload = multer({
   storage,
   limits: { fileSize: 3000000 },
@@ -63,6 +75,12 @@ const upload = multer({
   { name: "address" },
   { name: "account" },
 ]);
+
+//-------------------------------routes--------------------------------
+
+/**
+ * Esta función se encarga de subir documentos requeridos para poder cambiar el rol a premium
+ */
 router.post(
   "/users/:uid/documents",
   auth,
@@ -104,6 +122,9 @@ router.post(
   }
 );
 
+/**
+ *Esta función se encarga de actualziar los dosucmentos subidos por el usuario para cambiar su rol a premium
+ */
 router.put("/users/premium/:uid", auth, async (req, res) => {
   try {
     const { uid } = req.params;
@@ -137,6 +158,10 @@ router.put("/users/premium/:uid", auth, async (req, res) => {
       .send({ text: "Internal server error", error: error.message });
   }
 });
+
+/**
+ * Esta función se encarga de obtener todos los usuarios para poder administrarlos posteriormente desde el formulario de administración.
+ */
 router.get("/users", auth, onlyAdminAccess, async (req, res) => {
   try {
     const users = await UserServices.getAllUsers();
@@ -146,6 +171,9 @@ router.get("/users", auth, onlyAdminAccess, async (req, res) => {
   }
 });
 
+/**
+ * Esta función se encarga de eliminar las cuentas inactivas de la base de datos.
+ */
 router.delete("/users", auth, onlyAdminAccess, async (req, res) => {
   try {
     const users = await UserServices.deleteInactiveAccounts();
@@ -155,6 +183,9 @@ router.delete("/users", auth, onlyAdminAccess, async (req, res) => {
   }
 });
 
+/**
+ * Esta función se encarga de obtener un usuario por su email.
+ */
 router.get("/users/:email", auth, onlyAdminAccess, async (req, res) => {
   try {
     const { email } = req.params;
@@ -165,6 +196,9 @@ router.get("/users/:email", auth, onlyAdminAccess, async (req, res) => {
   }
 });
 
+/**
+ * Esta función se encarga de eliminar un usuario por su email.
+ */
 router.delete("/users/:email", auth, onlyAdminAccess, async (req, res) => {
   try {
     const { email } = req.params;
@@ -174,6 +208,10 @@ router.delete("/users/:email", auth, onlyAdminAccess, async (req, res) => {
     res.status(500).send("Internal server error");
   }
 });
+
+/**
+ * Esta función se encarga de actualizar el rol de un usuario por su email.
+ */
 router.put("/users", auth, onlyAdminAccess, async (req, res) => {
   try {
     const { email, newRole } = req.query;

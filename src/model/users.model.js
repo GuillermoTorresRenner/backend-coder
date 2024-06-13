@@ -1,3 +1,7 @@
+/**
+ * definicion del modelo de la coleccion users
+ */
+
 import mongoose from "mongoose";
 const roles = ["USER", "ADMIN", "PREMIUM"];
 const usersSchema = mongoose.Schema({

@@ -1,3 +1,7 @@
+/**
+ * definicion del modelo de la coleccion restore
+ */
+
 import mongoose from "mongoose";
 const restoreSchema = mongoose.Schema({
   user: { type: mongoose.Schema.ObjectId, required: true },

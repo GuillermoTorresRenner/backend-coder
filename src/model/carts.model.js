@@ -1,3 +1,7 @@
+/**
+ * definicion del modelo de la coleccion carts
+ */
+
 import mongoose from "mongoose";
 const cartSchema = new mongoose.Schema({
   products: [

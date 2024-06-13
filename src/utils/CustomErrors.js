@@ -1,6 +1,6 @@
 import Logger from "./Logger.js";
-//_______________________________________Generic errors_______________________________________________________________________
 
+// Error para cuando no se proporcionan suficientes datos para una operación
 export class InsufficientDataError extends Error {
   constructor(entity, requiredData) {
     super();
@@ -24,8 +24,7 @@ export class InsufficientDataError extends Error {
   }
 }
 
-//_______________________________________User Errors_______________________________________________________________________
-
+// Error para cuando un usuario no se encuentra en la base de datos
 export class UserNotFoundError extends Error {
   constructor() {
     super();
@@ -46,8 +45,8 @@ export class UserNotFoundError extends Error {
     };
   }
 }
-//_______________________________________Restore password Errors_______________________________________________________________________
 
+// Error para cuando un enlace de restablecimiento de contraseña es inválido
 export class InvalidLinkError extends Error {
   constructor() {
     super();
@@ -68,6 +67,8 @@ export class InvalidLinkError extends Error {
     };
   }
 }
+
+// Error para cuando se intenta usar una contraseña ya en uso
 export class AlreadyPasswordInUseError extends Error {
   constructor() {
     super();
@@ -89,8 +90,7 @@ export class AlreadyPasswordInUseError extends Error {
   }
 }
 
-//_______________________________________Product Errors_______________________________________________________________________
-
+// Error para cuando un producto no se encuentra disponible en la base de datos
 export class ProductNotFoundError extends Error {
   constructor() {
     super();
@@ -112,8 +112,7 @@ export class ProductNotFoundError extends Error {
   }
 }
 
-//_______________________________________Cart Errors_______________________________________________________________________
-
+// Error para cuando un carrito de compras no se encuentra en la base de datos
 export class CartNotFoundError extends Error {
   constructor() {
     super();
@@ -134,6 +133,8 @@ export class CartNotFoundError extends Error {
     };
   }
 }
+
+// Error para cuando no se puede crear un carrito de compras
 export class CartNotCreatedError extends Error {
   constructor() {
     super();
@@ -154,6 +155,8 @@ export class CartNotCreatedError extends Error {
     };
   }
 }
+
+// Error para cuando no se puede eliminar un producto del carrito
 export class ProductCartNotDeletedError extends Error {
   constructor() {
     super();
@@ -174,6 +177,8 @@ export class ProductCartNotDeletedError extends Error {
     };
   }
 }
+
+// Error para cuando no se puede actualizar un carrito de compras
 export class CartNotUpdatedError extends Error {
   constructor() {
     super();
@@ -194,6 +199,8 @@ export class CartNotUpdatedError extends Error {
     };
   }
 }
+
+// Error para cuando no se puede realizar la compra de un carrito
 export class CartNotBuyError extends Error {
   constructor() {
     super();
@@ -214,6 +221,8 @@ export class CartNotBuyError extends Error {
     };
   }
 }
+
+// Error para cuando no se puede crear un ticket de compra
 export class TicketNotCreatedError extends Error {
   constructor() {
     super();
@@ -235,8 +244,7 @@ export class TicketNotCreatedError extends Error {
   }
 }
 
-//_______________________________________Authentication Errors_______________________________________________________________________
-
+// Error para cuando falla la autenticación de un usuario
 export class AuthenticationError extends Error {
   constructor() {
     super();
@@ -258,8 +266,7 @@ export class AuthenticationError extends Error {
   }
 }
 
-//_______________________________________Authorization Errors_______________________________________________________________________
-
+// Error para cuando un usuario no tiene autorización para realizar una acción
 export class AuthorizationError extends Error {
   constructor() {
     super();

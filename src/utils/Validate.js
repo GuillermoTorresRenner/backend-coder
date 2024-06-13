@@ -1,3 +1,6 @@
+//Archivo de validaciones creado al inicio de l curso para verificar la unicidad de los datos y la presencia de propiedades requeridas.
+//actualmente se encuentra en desuso.
+
 class Validate {
   static unique(obj, list, propName) {
     const values = list.map((item) => item[propName]);
@@ -20,7 +23,6 @@ class Validate {
           );
         }
       } else {
-        // Check if single property is present
         if (!objProps.includes(prop)) {
           throw new Error(`Propiedades requeridas no encontradas: ${prop}`);
         }

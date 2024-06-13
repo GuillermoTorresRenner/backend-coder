@@ -1,3 +1,7 @@
+/**
+ * definicion del modelo de la coleccion products  con el agregado del plugin de paginacion mongoose-paginate-v2
+ */
+
 import mongoose from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 const productSchema = mongoose.Schema({

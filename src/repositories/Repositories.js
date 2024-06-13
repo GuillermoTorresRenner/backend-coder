@@ -1,3 +1,7 @@
+/*
+Este archivo centraliza la importación de los repositorios y los exporta para que puedan ser utilizados en otros archivos.
+*/
+
 import CartRepository from "./CartsRepository.js";
 import MessagesRepository from "./MessagesRepository.js";
 import MockingProductsRepository from "./MockingProductsRepository.js";

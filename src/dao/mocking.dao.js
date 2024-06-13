@@ -1,6 +1,12 @@
+/*
+Este archivo define una clase para generar datos ficticios de productos utilizando la biblioteca faker.
+ Se utiliza principalmente para pruebas o para poblar la base de datos con datos de muestra.
+ */
+
 import { faker } from "@faker-js/faker";
 import { v4 as uuidv4 } from "uuid";
 
+// Define la estructura de un producto con datos ficticios.
 class Product {
   constructor() {
     this.id = faker.datatype.uuid();
@@ -15,9 +21,11 @@ class Product {
   }
 }
 
+// Clase para generar y manejar una colección de productos ficticios.
 export default class Mocking {
   #products = [];
 
+  // Genera y devuelve una lista de 100 productos ficticios.
   static getProducts() {
     const products = [];
     for (let i = 0; i < 100; i++) {

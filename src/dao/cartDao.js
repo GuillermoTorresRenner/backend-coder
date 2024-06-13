@@ -1,10 +1,17 @@
+/*
+Este archivo contendrá los métodos necesarios para interactuar con la base de datos en la colección de carritos.
+*/
+
 import cartsModel from "../model/carts.model.js";
-import productsModel from "../model/products.model.js";
 import { ProductsServices } from "../repositories/Repositories.js";
+
 export default class CartDao {
+  // Crea un nuevo carrito vacío en la base de datos.
   static async createNewcart() {
     return cartsModel.create({});
   }
+
+  // Añade un producto al carrito o incrementa su cantidad si ya existe.
   static async addToCart(_id, pid, quantity) {
     const cart = await cartsModel.findOne({ _id }).lean();
 
@@ -30,6 +37,8 @@ export default class CartDao {
       );
     }
   }
+
+  // Obtiene un carrito por su ID, incluyendo la información detallada de los productos.
   static async getCartByID(_id) {
     const cart = await cartsModel
       .findOne({ _id })
@@ -38,6 +47,7 @@ export default class CartDao {
     return cart;
   }
 
+  // Elimina un producto específico del carrito.
   static async deleteCartProductByID(cartID, productID) {
     const cart = await cartsModel.findOne({ _id: cartID }).lean();
     cart.products = cart.products.filter(
@@ -47,9 +57,13 @@ export default class CartDao {
       new: true,
     });
   }
+
+  // Elimina un carrito por su ID.
   static async deleteCartByID(cartID) {
     return cartsModel.findByIdAndDelete({ _id: cartID });
   }
+
+  // Actualiza los productos de un carrito con nuevos datos.
   static async updateCartByID(cartID, newData) {
     const cart = await cartsModel.findOne({ _id: cartID }).lean();
     cart.products = newData;
@@ -57,6 +71,8 @@ export default class CartDao {
       new: true,
     });
   }
+
+  // Actualiza la cantidad de un producto específico en el carrito.
   static async updateCartProductsByID(cartID, productID, quantity) {
     const cart = await cartsModel.findOne({ _id: cartID }).lean();
     cart.products = cart.products.filter(
@@ -67,6 +83,8 @@ export default class CartDao {
       new: true,
     });
   }
+
+  // Procesa la compra de los productos en el carrito, actualizando el stock y calculando el monto total.
   static async purchase(cartID) {
     const cart = await this.getCartByID(cartID);
     const ids = [];

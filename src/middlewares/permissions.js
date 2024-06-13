@@ -1,6 +1,7 @@
 import { UserServices } from "../repositories/Repositories.js";
 import { AuthorizationError } from "../utils/CustomErrors.js";
 
+// Middleware para permitir acceso solo a usuarios con rol de ADMIN.
 export const onlyAdminAccess = async (req, res, next) => {
   try {
     const permission = await UserServices.getRoleByID(req.session.userId);
@@ -19,6 +20,7 @@ export const onlyAdminAccess = async (req, res, next) => {
   }
 };
 
+// Middleware para permitir acceso solo a usuarios con rol de USER.
 export const onlyUsersAccess = async (req, res, next) => {
   try {
     const permission = await UserServices.getRoleByID(req.session.userId);
@@ -35,6 +37,8 @@ export const onlyUsersAccess = async (req, res, next) => {
     }
   }
 };
+
+// Middleware para permitir acceso solo a usuarios con rol de PREMIUM.
 export const onlyPremiumAccess = async (req, res, next) => {
   try {
     const permission = await UserServices.getRoleByID(req.session.userId);
@@ -52,12 +56,13 @@ export const onlyPremiumAccess = async (req, res, next) => {
   }
 };
 
+// Middleware para permitir acceso a usuarios con rol de ADMIN o PREMIUM.
 export const onlyAdminOrPremiumAccess = async (req, res, next) => {
   try {
     const permission = await UserServices.getRoleByID(req.session.userId);
     const email = await UserServices.getusersEmailById(req.session.userId);
 
-    req.usersRole = permission.role; // Store the user role in the request object
+    req.usersRole = permission.role; // Almacena el rol del usuario en el objeto de solicitud
     req.usersEmail = email.email;
     if (permission.role === "ADMIN" || permission.role === "PREMIUM") {
       next();
@@ -72,12 +77,14 @@ export const onlyAdminOrPremiumAccess = async (req, res, next) => {
     }
   }
 };
+
+// Middleware para permitir acceso a usuarios con rol de USER o PREMIUM.
 export const onlyPremiumOrUserAccess = async (req, res, next) => {
   try {
     const permission = await UserServices.getRoleByID(req.session.userId);
     const email = await UserServices.getusersEmailById(req.session.userId);
 
-    req.usersRole = permission.role; // Store the user role in the request object
+    req.usersRole = permission.role; // Almacena el rol del usuario en el objeto de solicitud
     req.usersEmail = email.email;
     if (permission.role === "USER" || permission.role === "PREMIUM") {
       next();

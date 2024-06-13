@@ -1,3 +1,7 @@
+/**
+ * Archivo creado para la gestión de contraseñas.
+ */
+
 import bcrypt from "bcrypt";
 
 export default class PasswordManagement {

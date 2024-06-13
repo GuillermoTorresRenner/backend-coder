@@ -1,6 +1,5 @@
 import { Router } from "express";
 import ProductsDao from "../dao/productDao.js";
-import CartDao from "../dao/cartDao.js";
 import UsersDao from "../dao/usersDao.js";
 import auth from "../middlewares/auth.js";
 import {
@@ -17,9 +16,12 @@ import {
 
 const router = Router();
 
+// Redirecciona a la página de login
 router.get("/", async (req, res) => {
   res.redirect("/login");
 });
+
+// Muestra la página de login
 router.get("/login", async (req, res) => {
   try {
     const { userId } = req.session;
@@ -32,15 +34,20 @@ router.get("/login", async (req, res) => {
     res.send("Error interno en el servidor");
   }
 });
+
+// Muestra la página de registro
 router.get("/register", async (req, res) => {
   res.render("register");
 });
+
+// Muestra la página de perfil del usuario
 router.get("/profile", async (req, res) => {
   const { userId } = req.session;
   const userData = await UsersDao.getUserByID(userId);
   res.render("profile", { userData });
 });
 
+// Muestra la página de productos
 router.get("/products", auth, async (req, res) => {
   const { query, limit, page, sort } = req.query;
   const data = await ProductsDao.getAllProducts(query, page, limit, sort);
@@ -49,12 +56,15 @@ router.get("/products", auth, async (req, res) => {
 
   res.render("home", { data, userData });
 });
+
+// Muestra la página de detalle de un producto específico
 router.get("/product/:_id", auth, async (req, res) => {
   const { _id } = req.params;
   const data = await ProductsDao.getProductByID(_id);
   res.render("product", { data });
 });
 
+// Muestra la página del carrito de compras del usuario
 router.get("/my-cart", auth, async (req, res) => {
   const uid = req.session.userId;
   const cid = await UserServices.getCartIDByUserID(uid);
@@ -73,40 +83,48 @@ router.get("/my-cart", auth, async (req, res) => {
   }
 });
 
-//Ruta para el socket
+// Muestra la página de productos en tiempo real
 router.get("/realtimeproducts", auth, (req, res) => {
   res.render("realTimeProducts");
 });
-//Ruta para ingresar productos
+
+// Muestra la página para agregar un nuevo producto
 router.get("/new-product", auth, (req, res) => {
   res.render("newProduct");
 });
-//Ruta para chat
+
+// Muestra la página de chat
 router.get("/chat", auth, (req, res) => {
   res.render("chat");
 });
-//rgenerar correo de recuperación
+
+// Muestra la página para generar correo de recuperación
 router.get("/restore", (req, res) => {
   res.render("restore");
 });
-//rgenerar correo de recuperación
+
+// Muestra la página para restaurar contraseña mediante un hash
 router.get("/restore-password/:hash", (req, res) => {
   const { hash } = req.params;
   res.render("restorePassword", { hash });
 });
-//confimar correo de recuperación enviado
+
+// Muestra la página de confirmación de envío de enlace de recuperación
 router.get("/link-sended", (req, res) => {
   res.render("linkSended");
 });
-//confimar Psssword cambiado
+
+// Muestra la página de confirmación de cambio de contraseña
 router.get("/password-success", (req, res) => {
   res.render("passwordChanges");
 });
-//dashboard de gestión de usuarios
+
+// Muestra el dashboard de gestión de usuarios para administradores
 router.get("/dashboard", auth, onlyAdminAccess, async (req, res) => {
   res.render("dashboard");
 });
-//productos creados por el usuario
+
+// Muestra la página de productos administrados por el usuario
 router.get(
   "/products-admin",
   auth,
@@ -125,6 +143,8 @@ router.get(
     } catch (error) {}
   }
 );
+
+// Muestra la página para actualizar un producto
 router.get(
   "update-product/:id",
   auth,
@@ -140,6 +160,8 @@ router.get(
     }
   }
 );
+
+// Muestra la página de pagos
 router.get("/payments", auth, onlyPremiumOrUserAccess, async (req, res) => {
   try {
     const uid = req.session.userId;
@@ -157,6 +179,8 @@ router.get("/payments", auth, onlyPremiumOrUserAccess, async (req, res) => {
     res.status(500).send("Internal server error");
   }
 });
+
+// Muestra la página de detalle de compra
 router.get(
   "/purchase-detail",
   auth,
@@ -169,5 +193,4 @@ router.get(
     }
   }
 );
-
 export default router;

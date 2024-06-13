@@ -1,3 +1,8 @@
+/**
+ * Este archivo define las rutas para la gestión de mensajes en una aplicación Express.
+ * Utiliza el patrón de diseño de repositorio para abstraer las operaciones de base de datos
+ * relacionadas con los mensajes, facilitando así su mantenimiento y escalabilidad.
+ */
 import { Router } from "express";
 import { MessagesServices } from "../repositories/Repositories.js";
 import io from "../../app.js";
