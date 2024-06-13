@@ -68,4 +68,7 @@ export default class UsersRepository {
   static getCartIDByUserID(userId) {
     return UsersDao.getCartIDByUserID(userId);
   }
+  static async moveCartToOldCarts(userId, cartId) {
+    return UsersDao.moveCartToOldCarts(userId, cartId);
+  }
 }

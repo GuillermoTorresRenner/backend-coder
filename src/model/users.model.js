@@ -19,6 +19,12 @@ const usersSchema = mongoose.Schema({
   ],
   last_connection: { type: Date },
   cartId: { type: mongoose.Schema.Types.ObjectId, ref: "carts", default: null },
+  oldCars: [
+    {
+      carId: { type: mongoose.Schema.Types.ObjectId, ref: "carts" },
+      purchaseDate: { type: Date, default: Date.now() },
+    },
+  ],
 });
 const usersModel = mongoose.model("users", usersSchema);
 export default usersModel;

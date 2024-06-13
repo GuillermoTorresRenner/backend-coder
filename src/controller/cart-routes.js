@@ -22,37 +22,40 @@ import {
   UserNotFoundError,
   AuthorizationError,
 } from "../utils/CustomErrors.js";
+import NodeMailer from "../utils/NodeMailer.js";
+import UsersRepository from "../repositories/UsersRepository.js";
 const router = Router();
 /**
  * Se modifica este método de la versión anterior, donde no es necesario el envío del CID, puesto que se obtiene
  *  el ID del usuario de la sesión.
  *
  */
-// router.get("/carts/:cid", async (req, res) => {
-//   try {
-//     const { cid } = req.params;
+router.get("/carts/:cid", async (req, res) => {
+  try {
+    const { cid } = req.params;
 
-//     if (!cid) {
-//       throw new InsufficientDataError("Cart", ["CartID"]);
-//     }
-//     const data = await CartServices.getCartByID(cid);
-//     if (!data) {
-//       throw new CartNotFoundError();
-//     }
+    if (!cid) {
+      throw new InsufficientDataError("Cart", ["CartID"]);
+    }
+    const data = await CartServices.getCartByID(cid);
+    if (!data) {
+      throw new CartNotFoundError();
+    }
 
-//     res.status(200).send(data);
-//   } catch (error) {
-//     if (
-//       error instanceof CartNotFoundError ||
-//       error instanceof InsufficientDataError
-//     ) {
-//       const errorData = err.getErrorData();
-//       res.status(errorData.status).send(errorData.message);
-//     } else {
-//       res.status(404).send("Error interno del servidor");
-//     }
-//   }
-// });
+    res.status(200).send(data);
+  } catch (error) {
+    if (
+      error instanceof CartNotFoundError ||
+      error instanceof InsufficientDataError
+    ) {
+      const errorData = err.getErrorData();
+      res.status(errorData.status).send(errorData.message);
+    } else {
+      res.status(404).send("Error interno del servidor");
+    }
+  }
+});
+
 router.get("/cart", async (req, res) => {
   try {
     const uid = req.session.userId;
@@ -103,38 +106,40 @@ router.get("/cart", async (req, res) => {
  * de user, puedo obtener el CID directamente del registro del usuario a través de SessionID, de este modo no sólo es más fácil
  * ubicar el carrito de un usuario, sino que cada usuario puede tener un sólo carrito activo.
  */
-// router.post(
-//   "/carts/:cid/products/:pid",
-//   onlyAdminOrPremiumAccess,
-//   async (req, res) => {
-//     try {
-//       const { quantity } = req.body;
-//       const { cid, pid } = req.params;
-//       if (!quantity || !cid || !pid)
-//         throw new InsufficientDataError("product", [
-//           "quantity",
-//           "cartID",
-//           "ProductID",
-//         ]);
-//       const productOwner = await ProductsServices.getProductOwnerById(pid);
-//       if (
-//         req.usersRole === "PREMIUM" &&
-//         req.usersEmail === productOwner.owner
-//       ) {
-//         throw new AuthorizationError();
-//       } else {
-//         const data = await CartServices.addToCart(cid, pid, quantity);
-//         res.status(201).send(data);
-//       }
-//     } catch (error) {
-//       if (error instanceof InsufficientDataError) {
-//         res.status(error.statusCode).send(error.getErrorData());
-//       } else {
-//         res.status(500).send(error.message);
-//       }
-//     }
-//   }
-// );
+router.post(
+  "/carts/:cid/products/:pid",
+  onlyAdminOrPremiumAccess,
+  async (req, res) => {
+    try {
+      const { quantity } = req.body;
+      const { cid, pid } = req.params;
+      if (!quantity || !cid || !pid)
+        throw new InsufficientDataError("product", [
+          "quantity",
+          "cartID",
+          "ProductID",
+        ]);
+      const productOwner = await ProductsServices.getProductOwnerById(pid);
+      if (
+        req.usersRole === "PREMIUM" &&
+        req.usersEmail === productOwner.owner
+      ) {
+        throw new AuthorizationError();
+      } else {
+        const data = await CartServices.addToCart(cid, pid, quantity);
+        res.status(201).send(data);
+      }
+    } catch (error) {
+      if (error instanceof InsufficientDataError) {
+        res.status(error.statusCode).send(error.getErrorData());
+      } else {
+        res.status(500).send(error.message);
+      }
+    }
+  }
+);
+/**Versión usada en el frontend */
+
 router.post("/cart", onlyPremiumOrUserAccess, async (req, res) => {
   try {
     const { pid, quantity } = req.query;
@@ -146,12 +151,6 @@ router.post("/cart", onlyPremiumOrUserAccess, async (req, res) => {
     if (req.usersRole === "PREMIUM" && req.usersEmail === productOwner.owner) {
       throw new AuthorizationError();
     } else {
-      /**
-       Acá entra la modicficicación del método respecto del original:
-       se verifica si el user tiene asignado un carro de compras, si lo tiene se carga el producto en ese carro, 
-       si no se crea un carro nuevo y se asigna al usuario.
-
-       */
       if (!cid) {
         const newCart = await CartServices.createNewcart();
         await UserServices.addCartToUser(uid, newCart._id);
@@ -175,24 +174,26 @@ router.post("/cart", onlyPremiumOrUserAccess, async (req, res) => {
  * Se modifica este método para que no sea necesario pasar el CID, puesto que al haber creado un campo vinculante en el model
  */
 
-// router.delete("/carts/:cid/products/:pid", async (req, res) => {
-//   try {
-//     const { cid, pid } = req.params;
-//     if (!cid || !pid)
-//       throw new InsufficientDataError("Cart", ["cartID", "ProductID"]);
-//     const data = await CartServices.deleteCartProductByID(cid, pid);
-//     if (!data) throw new ProductCartNotDeletedError();
-//     res.send(data);
-//   } catch (error) {
-//     if (error instanceof InsufficientDataError) {
-//       res.status(error.statusCode).send(error.getErrorData());
-//     } else if (error instanceof ProductCartNotDeletedError) {
-//       res.status(error.statusCode).send(error.message);
-//     } else {
-//       res.status(500).send(error.message);
-//     }
-//   }
-// });
+router.delete("/carts/:cid/products/:pid", async (req, res) => {
+  try {
+    const { cid, pid } = req.params;
+    if (!cid || !pid)
+      throw new InsufficientDataError("Cart", ["cartID", "ProductID"]);
+    const data = await CartServices.deleteCartProductByID(cid, pid);
+    if (!data) throw new ProductCartNotDeletedError();
+    res.send(data);
+  } catch (error) {
+    if (error instanceof InsufficientDataError) {
+      res.status(error.statusCode).send(error.getErrorData());
+    } else if (error instanceof ProductCartNotDeletedError) {
+      res.status(error.statusCode).send(error.message);
+    } else {
+      res.status(500).send(error.message);
+    }
+  }
+});
+/**Versión usada en el frontend */
+
 router.delete("/cart/product/:pid", async (req, res) => {
   try {
     const { pid } = req.params;
@@ -278,45 +279,9 @@ router.put("/carts/:cid/products/:pid", onlyUsersAccess, async (req, res) => {
 /**
  * Se modifica este método para que no sea necesario pasar el CID, puesto que al haber creado un campo vinculante en el model
  */
-// router.post("/carts/:cid/purchase", async (req, res) => {
-//   try {
-//     const { cid } = req.params;
-//     if (!cid) throw new InsufficientDataError("cart", ["CartID"]);
-//     const transaction = await CartServices.purchase(cid);
-//     if (!transaction) throw new CartNotBuyError();
-//     const userId = req.session.userId;
-//     const user = await UserServices.getUserByID(userId);
-//     if (!user) throw UserNotFoundError();
-//     const ticketData = {
-//       amount: transaction.amount,
-//       purchaser: user.email,
-//     };
-//     let ticket = await TicketsServices.createNewTicket(ticketData);
-//     if (!ticket) throw TicketNotCreatedError();
-
-//     if (transaction.leftiesCart) {
-//       ticket = { ...ticket._doc, productsOutOfStock: transaction.leftiesCart };
-//     }
-
-//     res.status(200).send(ticket);
-//   } catch (error) {
-//     if (error instanceof InsufficientDataError) {
-//       res.status(error.statusCode).send(error.getErrorData());
-//     } else if (error instanceof UserNotFoundError) {
-//       res.status(error.statusCode).send(error.message);
-//     } else if (error instanceof CartNotBuyError) {
-//       res.status(error.statusCode).send(error.message);
-//     } else if (error instanceof TicketNotCreatedError) {
-//       res.status(error.statusCode).send(error.message);
-//     } else {
-//       res.status(500).send(error.message);
-//     }
-//   }
-// });
-router.post("/cart/purchase", async (req, res) => {
+router.post("/carts/:cid/purchase", async (req, res) => {
   try {
-    const uid = req.session.userId;
-    const cid = await UserServices.getCartIDByUserID(uid);
+    const { cid } = req.params;
     if (!cid) throw new InsufficientDataError("cart", ["CartID"]);
     const transaction = await CartServices.purchase(cid);
     if (!transaction) throw new CartNotBuyError();
@@ -333,6 +298,75 @@ router.post("/cart/purchase", async (req, res) => {
     if (transaction.leftiesCart) {
       ticket = { ...ticket._doc, productsOutOfStock: transaction.leftiesCart };
     }
+
+    res.status(200).send(ticket);
+  } catch (error) {
+    if (error instanceof InsufficientDataError) {
+      res.status(error.statusCode).send(error.getErrorData());
+    } else if (error instanceof UserNotFoundError) {
+      res.status(error.statusCode).send(error.message);
+    } else if (error instanceof CartNotBuyError) {
+      res.status(error.statusCode).send(error.message);
+    } else if (error instanceof TicketNotCreatedError) {
+      res.status(error.statusCode).send(error.message);
+    } else {
+      res.status(500).send(error.message);
+    }
+  }
+});
+/**Versión usada en el frontend */
+router.post("/cart/purchase", async (req, res) => {
+  try {
+    const uid = req.session.userId;
+    const email = await UserServices.getusersEmailById(uid);
+    const cid = await UserServices.getCartIDByUserID(uid);
+    const cart = await CartServices.getCartByID(cid);
+    if (!cid) throw new InsufficientDataError("cart", ["CartID"]);
+    const transaction = await CartServices.purchase(cid);
+    if (!transaction) throw new CartNotBuyError();
+    const userId = req.session.userId;
+    const user = await UserServices.getUserByID(userId);
+    if (!user) throw UserNotFoundError();
+    const ticketData = {
+      amount: transaction.amount,
+      purchaser: user.email,
+    };
+    let ticket = await TicketsServices.createNewTicket(ticketData);
+    if (!ticket) throw TicketNotCreatedError();
+
+    if (transaction.leftiesCart) {
+      ticket = { ...ticket._doc, productsOutOfStock: transaction.leftiesCart };
+    }
+
+    /*Nuevas funcionalidades, eliminar el current cart de registro del usuario
+    agregar el id del carrito ya comprado en elel campo de oldCarts del usuario
+    enviar un email al usuario con el detalle de la compra.
+    */
+    //Agregar el carrito comprado a la lista de carritos antiguos del usuario
+    await UsersRepository.moveCartToOldCarts(uid, cid);
+    //Eliminar el carrito actual del usuario
+    await UserServices.removeCartToUser(uid);
+    //Enviar email al usuario con el detalle de la compra
+    NodeMailer.sendMail({
+      from: "Infuzion",
+      to: email.email,
+      subject: "Compra realizada en Infuzion Market",
+      html: `<p> !Hola ${user.first_name} Gracias por tu compra <strong>#${
+        ticket.code
+      }</strong> en Infuzion Market!</p>
+      <p>Detalle de la compra:</p>
+      <br/>
+      <ul>
+      ${cart.products.map(
+        (product) =>
+          `<li>${product.productId.title} - ${product.quantity} unidad(es) - $${product.productId.price} </li>`
+      )}
+      </ul>,
+      <br/>
+      <h2>Total de la compra: $${transaction.amount}</h2>
+      <br/>
+      <p>Gracias por comprar en Infuzion Market, pronto te contactaremos para confirmarte la fecha de despacho!</p>`,
+    });
 
     res.status(200).send(ticket);
   } catch (error) {

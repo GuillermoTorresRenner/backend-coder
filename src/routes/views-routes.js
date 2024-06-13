@@ -59,15 +59,18 @@ router.get("/my-cart", auth, async (req, res) => {
   const uid = req.session.userId;
   const cid = await UserServices.getCartIDByUserID(uid);
   const data = await CartServices.getCartByID(cid);
-  data.products.map((pro) => {
-    pro.total = pro.productId.price * pro.quantity;
-  });
-  const totalPrice = data.products.reduce(
-    (acc, product) => acc + product.total,
-    0
-  );
-  console.log(data.products);
-  res.render("cart", { data, totalPrice });
+  if (!data) {
+    return res.render("cart", { data: { products: [] }, totalPrice: 0 });
+  } else {
+    data.products.map((pro) => {
+      pro.total = pro.productId.price * pro.quantity;
+    });
+    const totalPrice = data.products.reduce(
+      (acc, product) => acc + product.total,
+      0
+    );
+    res.render("cart", { data, totalPrice });
+  }
 });
 
 //Ruta para el socket
@@ -130,7 +133,6 @@ router.get(
     try {
       const { id } = req.params;
       const product = await ProductsServices.getProductByID(id);
-      console.log(product);
 
       res.render("editProduct", { product });
     } catch (error) {
@@ -155,5 +157,17 @@ router.get("/payments", auth, onlyPremiumOrUserAccess, async (req, res) => {
     res.status(500).send("Internal server error");
   }
 });
+router.get(
+  "/purchase-detail",
+  auth,
+  onlyPremiumOrUserAccess,
+  async (req, res) => {
+    try {
+      res.render("purchaseDetail");
+    } catch (error) {
+      res.status(500).send("Internal server error");
+    }
+  }
+);
 
 export default router;

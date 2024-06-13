@@ -9,3 +9,4 @@ const ticketsSchema = mongoose.Schema({
 });
 const TicketsModel = mongoose.model("tickets", ticketsSchema);
 export default TicketsModel;
+24;

@@ -80,7 +80,6 @@ const swaggerOptions = {
   },
   apis: [`${__dirname}/docs/**/*.yaml`],
 };
-console.log(__dirname);
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 // Middleware
 app.use(cookieParser());

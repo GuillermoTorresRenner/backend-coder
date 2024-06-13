@@ -19,7 +19,7 @@ export default class UsersDao {
     return usersModel
       .findOne(
         { _id },
-        { first_name: 1, last_name: 1, email: 1, age: 1, role: 1 }
+        { first_name: 1, last_name: 1, email: 1, age: 1, role: 1, cartId: 1 }
       )
       .lean();
   }
@@ -62,8 +62,6 @@ export default class UsersDao {
     if (usersRole.role === "PREMIUM") role = "USER";
     if (usersRole.role === "USER") role = "PREMIUM";
     if (usersRole.role === "ADMIN") role = "ADMIN";
-    console.log(usersRole.role);
-    console.log("nuevo rol: ", role);
 
     return usersModel.findByIdAndUpdate(
       { _id },
@@ -133,8 +131,17 @@ export default class UsersDao {
   }
   static removeCartToUser(userId) {
     return usersModel.findByIdAndUpdate(
+      userId,
+      { $set: { cartId: null } },
+      { new: true }
+    );
+  }
+  static async moveCartToOldCarts(userId, cartId) {
+    const user = await usersModel.findOne({ _id: userId }).lean();
+    user.oldCars.push({ carId: cartId });
+    return usersModel.findByIdAndUpdate(
       { _id: userId },
-      { cartId: "" },
+      { oldCars: user.oldCars },
       { new: true }
     );
   }
