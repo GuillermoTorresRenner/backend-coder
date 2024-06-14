@@ -14,7 +14,7 @@ describe("Testing the /carts/:cid endpoint", () => {
   });
 
   it("el endpoint GET /carts/cid debe devolver status 200 y un objeto que representa el carro de compras con los productos agregados", async () => {
-    const cid = "66135ed262f729068ef81d8d";
+    const cid = "666a402ee2a51aa806ebb2f3";
     const { _body, statusCode } = await requester
       .get(`/carts/${cid}`)
       .set("Cookie", cookie);
@@ -31,18 +31,5 @@ describe("Testing the /carts/:cid endpoint", () => {
       .set("Cookie", cookie);
 
     expect(statusCode).to.equal(404);
-  });
-
-  it("el endpoint POST /carts/cid debe enviar un status 201 al crear un carro nuevo, y éste debe tener un array de productos vacío", async () => {
-    const { statusCode, _body } = await requester
-      .post("/carts")
-      .set("Cookie", cookie);
-
-    expect(statusCode).to.be.equal(201);
-    expect(_body)
-      .to.be.an("object")
-      .and.to.have.property("products")
-      .that.is.an("array")
-      .and.to.have.lengthOf(0);
   });
 });

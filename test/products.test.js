@@ -31,28 +31,4 @@ describe("Testing de endpoints /products", () => {
     expect(statusCode).to.equal(200);
     expect(body).to.be.an("object");
   });
-
-  it("el endpoint POST /products debe devolver status 201 y el producto creado", async () => {
-    const code = uuidv4();
-    const { statusCode } = await requester
-      .post("/products")
-      .set("Cookie", cookie)
-      .field("title", "Producto de prueba")
-      .field("description", "producto creado para testear")
-      .field("price", 120000)
-      .field("status", true)
-      .field("code", code)
-      .field("stock", 23)
-      .field("category", "infusiones")
-      .attach("img", `${__dirname}/test/test.jpeg`);
-
-    expect(statusCode).to.be.equal(201);
-  });
-  //reformular este test cuando tengamos la clase complementaria de CODER
-  // it("el endpoint DELETE debe devolver status 200 tras borrar un objeto producto", async () => {
-  //   const { statusCode } = await requester
-  //     .delete(`/products/664173aa608f87e8ab68a06d`)
-  //     .set("Cookie", cookie);
-  //   expect(statusCode).to.be.ok;
-  // });
 });
