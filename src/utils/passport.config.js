@@ -88,7 +88,11 @@ const initializaPassport = () => {
       {
         clientID: "Iv1.a4e074b7057f062f",
         clientSecret: "3fca71b77346b74b1be965509b45134fd2f92350",
-        callbackURL: "http://localhost:8080/api/sessions/githubCallback",
+        // callbackURL: "http://localhost:8080/api/sessions/githubCallback",
+        callbackURL:
+          process.env.NODE_ENV === "production"
+            ? `${process.env.PRODUCTION_DOMAIN}/api/sessions/githubCallback`
+            : `${process.env.DEVELOPMENT_DOMAIN}/api/sessions/githubCallback`,
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
