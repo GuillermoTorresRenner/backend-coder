@@ -7,9 +7,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "test": "mocha",
-    "start-server": "concurrently \"npm run server\" \"wait-on http://localhost:8080/api\""
-
+    "test": "mocha"
   },
   "keywords": [],
   "author": "",

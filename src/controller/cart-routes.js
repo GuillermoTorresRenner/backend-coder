@@ -31,6 +31,7 @@ import {
 } from "../middlewares/permissions.js";
 import {
   CartNotBuyError,
+  CartNotCreatedError,
   CartNotFoundError,
   CartNotUpdatedError,
   InsufficientDataError,
@@ -67,7 +68,7 @@ router.get("/carts/:cid", async (req, res) => {
       error instanceof CartNotFoundError ||
       error instanceof InsufficientDataError
     ) {
-      const errorData = error.getErrorData();
+      const errorData = err.getErrorData();
       res.status(errorData.status).send(errorData.message);
     } else {
       res.status(404).send("Error interno del servidor");

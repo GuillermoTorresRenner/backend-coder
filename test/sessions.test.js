@@ -7,7 +7,7 @@ let cookie;
 describe("Testing de endpoints /sessions", () => {
   it("el endpoint POST /sessions debe devolver una cookie con el token auth", async () => {
     const result = await requester.post("/sessions/login").send({
-      email: "torresrennerguillermo@gmail.com",
+      email: "huayno@gmail.com",
       password: "123123",
     });
     const cookieResult = result.headers["set-cookie"][0];
