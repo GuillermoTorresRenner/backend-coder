@@ -89,7 +89,8 @@ const initializaPassport = () => {
         clientID: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
         callbackURL:
-callbackURL: "https://backend-coder-production-dfae.up.railway.app/api/sessions/githubCallback",      },
+          "https://backend-coder-production-dfae.up.railway.app/api/sessions/githubCallback",
+      },
       async (accessToken, refreshToken, profile, done) => {
         try {
           // Intenta obtener el usuario por correo electrónico
