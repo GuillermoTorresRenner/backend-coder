@@ -434,6 +434,7 @@ router.post("/cart/purchase", async (req, res) => {
       res.status(error.statusCode).send(error.message);
     } else {
       res.status(500).send(error.message);
+      console.log(error.message);
     }
   }
 });
